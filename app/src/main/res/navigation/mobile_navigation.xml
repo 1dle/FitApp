@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.undef.fitapp.ui.home.HomeFragment"
+        android:name="com.undef.fitapp.ui.diary.DiaryFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home">
+        tools:layout="@layout/fragment_diary">
 
         <action
             android:id="@+id/action_HomeFragment_to_HomeSecondFragment"
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_home_second"
-        android:name="com.undef.fitapp.ui.home.HomeSecondFragment"
+        android:name="com.undef.fitapp.ui.diary.HomeSecondFragment"
         android:label="@string/home_second"
         tools:layout="@layout/fragment_home_second">
         <action
@@ -31,13 +31,13 @@
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.undef.fitapp.ui.gallery.GalleryFragment"
+        android:name="com.undef.fitapp.ui.mapexc.MapExerciseFragment"
         android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_mapexercise" />
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="com.undef.fitapp.ui.slideshow.SlideshowFragment"
+        android:name="com.undef.fitapp.ui.settings.SettingsFragment"
         android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_settings" />
 </navigation>

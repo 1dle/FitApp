@@ -1,4 +1,4 @@
-package com.undef.fitapp.ui.gallery
+package com.undef.fitapp.ui.mapexc
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,7 +15,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.undef.fitapp.R
 
 
-class GalleryFragment : Fragment() {
+class MapExerciseFragment : Fragment() {
     var mMapView: MapView? = null
     private var googleMap: GoogleMap? = null
     override fun onCreateView(
@@ -24,7 +24,7 @@ class GalleryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val rootView: View =
-            inflater.inflate(R.layout.fragment_gallery, container, false)
+            inflater.inflate(R.layout.fragment_mapexercise, container, false)
         mMapView =
             rootView.findViewById<View>(R.id.mapView) as MapView
         mMapView!!.onCreate(savedInstanceState)
