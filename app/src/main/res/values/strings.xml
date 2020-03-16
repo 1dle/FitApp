@@ -5,8 +5,8 @@
     <string name="tab_text_2">Tab 2</string>
 
     <string-array name="sex_array">
-        <item>Férfi</item>
-        <item>Nő</item>
+        <item>Male</item>
+        <item>Female</item>
     </string-array>
 
     <string name="title_activity_main">MainActivity</string>
@@ -17,13 +17,34 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Napló</string>
-    <string name="menu_gallery">Gps gyakorlat</string>
-    <string name="menu_slideshow">Beállítások</string>
+    <string name="menu_home">Diary</string>
+    <string name="menu_gallery">GPS Exercise</string>
+    <string name="menu_slideshow">Settings</string>
 
     <string name="home_second">Home Second</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="leftArrow"><![CDATA[<-]]></string>
     <string name="rightArrow"><![CDATA[->]]></string>
+    <string name="tab1Title">Login credentials</string>
+    <string name="tab2Title">Personal data</string>
+    <string name="tab3Title">Select goal</string>
+    <string name="loginButton">Login</string>
+    <string name="registerButton">Register</string>
+    <string name="emailEditText">E-mail address</string>
+    <string name="passwordEditText">Password</string>
+    <string name="diaryToday">Today</string>
+    <string name="diaryConsumed">Consumed: kcals</string>
+    <string name="diaryBurned">Burned: kcals</string>
+    <string name="diaryRemaining">Remaining: kcals</string>
+    <string name="goalLose">Lose</string>
+    <string name="goalMaintain">Maintain</string>
+    <string name="goalGain">Gain</string>
+    <string name="uiDone">Done</string>
+    <string name="goalWeight">"Weight goal: "</string>
+    <string name="uiNextArrow"><![CDATA[->]]></string>
+    <string name="sex">"Sex: "</string>
+    <string name="labelBirthDate">"Birth Date: "</string>
+    <string name="labelWeightKg">Weight (kg)</string>
+    <string name="labelHeightCm">Height (cm)</string>
 
 </resources>

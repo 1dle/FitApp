@@ -19,19 +19,19 @@
             android:id="@+id/rbGoalLose"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Csökkentése" />
+            android:text="@string/goalLose" />
 
         <RadioButton
             android:id="@+id/rbGoalStay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Megőrzése" />
+            android:text="@string/goalMaintain" />
 
         <RadioButton
             android:id="@+id/radioButton3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Növelése" />
+            android:text="@string/goalGain" />
     </RadioGroup>
 
     <TextView
@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:text="Testsúly: "
+        android:text="@string/goalWeight"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/radioGroup"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
-        android:text="Kész"
+        android:text="@string/uiDone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
