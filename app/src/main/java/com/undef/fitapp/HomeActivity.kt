@@ -1,5 +1,6 @@
 package com.undef.fitapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
@@ -13,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.getbase.floatingactionbutton.FloatingActionButton
+import com.undef.fitapp.ui.diary.SearchMnEActivity
 
 class HomeActivity : AppCompatActivity() {
 
@@ -26,11 +28,13 @@ class HomeActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        var fabAddMeal: FloatingActionButton = findViewById(R.id.fabAddMeal);
+        val fabAddMeal: FloatingActionButton = findViewById(R.id.fabAddMeal);
         fabAddMeal.setOnClickListener {
-            Toast.makeText(this,"addMeal", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this,"addMeal", Toast.LENGTH_SHORT).show();
+            val intent = Intent(this, SearchMnEActivity::class.java)
+            startActivity(intent)
         }
-        var fabAddExercise: FloatingActionButton = findViewById(R.id.fabAddExercise);
+        val fabAddExercise: FloatingActionButton = findViewById(R.id.fabAddExercise);
         fabAddExercise.setOnClickListener {
             Toast.makeText(this,"addExercise", Toast.LENGTH_SHORT).show();
         }
