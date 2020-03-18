@@ -2,6 +2,8 @@ package com.undef.fitapp.ui.diary
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.undef.fitapp.R
@@ -24,8 +26,8 @@ class SearchMnEActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_mn_e)
-
-        /*val tvConsumed: TextView = root.findViewById(R.id.tvConsumed)
+        /*
+        val tvConsumed: TextView = root.findViewById(R.id.tvConsumed)
         diaryViewModel.consumedText.observe(viewLifecycleOwner, Observer {
             tvConsumed.text = it
         })*/
