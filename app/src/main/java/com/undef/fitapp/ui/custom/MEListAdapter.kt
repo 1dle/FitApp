@@ -10,8 +10,8 @@ import com.undef.fitapp.models.Healthy
 import com.undef.fitapp.models.Meal
 import kotlinx.android.synthetic.main.list_item_mne.view.*
 
-class SearchResultAdapter(private val myDataset: MutableList<Healthy>) :
-    RecyclerView.Adapter<SearchResultAdapter.MyViewHolder>() {
+class MEListAdapter(private val myDataset: MutableList<Healthy>) :
+    RecyclerView.Adapter<MEListAdapter.MyViewHolder>() {
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -22,7 +22,7 @@ class SearchResultAdapter(private val myDataset: MutableList<Healthy>) :
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int): SearchResultAdapter.MyViewHolder {
+                                    viewType: Int): MyViewHolder {
         // create a new view
         val singleItem = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item_mne, parent, false)

@@ -8,7 +8,7 @@ import com.undef.fitapp.R
 import com.undef.fitapp.models.Exercise
 import com.undef.fitapp.models.Healthy
 import com.undef.fitapp.models.Meal
-import com.undef.fitapp.ui.custom.SearchResultAdapter
+import com.undef.fitapp.ui.custom.MEListAdapter
 
 class SearchMnEActivity : AppCompatActivity() {
     //Search Meal and Exercise Activity
@@ -30,7 +30,7 @@ class SearchMnEActivity : AppCompatActivity() {
             tvConsumed.text = it
         })*/
         viewManager = LinearLayoutManager(this)
-        viewAdapter = SearchResultAdapter(mutableListOf<Healthy>(
+        viewAdapter = MEListAdapter(mutableListOf<Healthy>(
             Meal(1,"apple",100.0),
             Exercise(2,"Running",-320.1),
             Meal(3,"pear",102.0)

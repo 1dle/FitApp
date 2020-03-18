@@ -20,26 +20,11 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    var fabRotate = false;
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-        val fabAddMeal: FloatingActionButton = findViewById(R.id.fabAddMeal);
-        fabAddMeal.setOnClickListener {
-            //Toast.makeText(this,"addMeal", Toast.LENGTH_SHORT).show();
-            val intent = Intent(this, SearchMnEActivity::class.java)
-            startActivity(intent)
-        }
-        val fabAddExercise: FloatingActionButton = findViewById(R.id.fabAddExercise);
-        fabAddExercise.setOnClickListener {
-            Toast.makeText(this,"addExercise", Toast.LENGTH_SHORT).show();
-        }
-
-
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
