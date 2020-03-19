@@ -10,7 +10,7 @@ class DiaryViewModel : ViewModel() {
         _consumedText.apply { value = "asd" }
     }*/
 
-    private val _consumedText = MutableLiveData<String>().apply {
+    val _consumedText = MutableLiveData<String>().apply {
         value = "Consumed: 0 kcals";
     }
     private val _burnedText = MutableLiveData<String>().apply {

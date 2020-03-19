@@ -18,8 +18,13 @@ import com.undef.fitapp.R
 import com.undef.fitapp.models.Exercise
 import com.undef.fitapp.models.Healthy
 import com.undef.fitapp.models.Meal
+import com.undef.fitapp.requests.ApiClient
 import com.undef.fitapp.ui.custom.MEListAdapter
 import kotlinx.android.synthetic.main.fragment_diary.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DiaryFragment : Fragment() {
 
@@ -110,6 +115,13 @@ class DiaryFragment : Fragment() {
             // specify an viewAdapter (see also next example)
             adapter = viewAdapter
 
+        }
+        val apiClient = ApiClient()
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = apiClient.simpleGet("asd")
+            withContext(Dispatchers.Main){
+                diaryViewModel._consumedText.apply { value = result }
+            }
         }
     }
 }
