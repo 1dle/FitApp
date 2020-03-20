@@ -1,4 +1,7 @@
 <resources>
+
+    <string name="gmaps_api_key"></string>
+
     <string name="app_name">FitApp</string>
     <string name="title_activity_create_profile">CreateProfileActivity</string>
     <string name="tab_text_1">Tab 1</string>
@@ -46,5 +49,8 @@
     <string name="labelBirthDate">"Birth Date: "</string>
     <string name="labelWeightKg">Weight (kg)</string>
     <string name="labelHeightCm">Height (cm)</string>
+
+
+
 
 </resources>
