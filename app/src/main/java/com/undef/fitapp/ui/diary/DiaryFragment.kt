@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -15,16 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.undef.fitapp.R
-import com.undef.fitapp.models.Exercise
-import com.undef.fitapp.models.Healthy
-import com.undef.fitapp.models.Meal
-import com.undef.fitapp.requests.ApiClient
 import com.undef.fitapp.ui.custom.MEListAdapter
-import kotlinx.android.synthetic.main.fragment_diary.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class DiaryFragment : Fragment() {
 
@@ -86,6 +77,10 @@ class DiaryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        CoroutineScope(Dispatchers.IO).launch {
+            diaryViewModel.getDailyData()
+        }
+
         val fabAddMeal: FloatingActionButton = view.findViewById(R.id.fabAddMeal)
         fabAddMeal.setOnClickListener {
             //Toast.makeText(this,"addMeal", Toast.LENGTH_SHORT).show();
@@ -98,11 +93,7 @@ class DiaryFragment : Fragment() {
         }
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = MEListAdapter(mutableListOf<Healthy>(
-            Meal(1,"apple",100.0),
-            Exercise(2,"Running",-320.1),
-            Meal(3,"pear",102.0)
-        ))
+        viewAdapter = MEListAdapter(diaryViewModel.foodNMet.value!!)
 
         recyclerView = view.findViewById<RecyclerView>(R.id.rvDiaryDaily).apply {
             // use this setting to improve performance if you know that changes
@@ -116,12 +107,7 @@ class DiaryFragment : Fragment() {
             adapter = viewAdapter
 
         }
-        val apiClient = ApiClient()
-        CoroutineScope(Dispatchers.IO).launch {
-            val result = apiClient.simpleGet("asd")
-            withContext(Dispatchers.Main){
-                diaryViewModel._consumedText.apply { value = result }
-            }
-        }
+
+
     }
 }

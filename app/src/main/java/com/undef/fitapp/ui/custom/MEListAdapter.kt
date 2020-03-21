@@ -4,13 +4,14 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.undef.fitapp.R
-import com.undef.fitapp.models.Healthy
-import com.undef.fitapp.models.Meal
+import com.undef.fitapp.models.Food
+import com.undef.fitapp.models.FoodNMet
 import kotlinx.android.synthetic.main.list_item_mne.view.*
 
-class MEListAdapter(private val myDataset: MutableList<Healthy>) :
+class MEListAdapter(private val myDataset: MutableList<FoodNMet>) :
     RecyclerView.Adapter<MEListAdapter.MyViewHolder>() {
 
     // Provide a reference to the views for each data item
@@ -36,13 +37,9 @@ class MEListAdapter(private val myDataset: MutableList<Healthy>) :
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         //holder.textView.text = myDataset[position]
-        holder.view.tvResultItemTitle.text = myDataset[position].title
-        holder.view.tvResultItemKcals.text = "${myDataset[position].kcal} kcals"
-        holder.view.ivResultItemType.setImageResource(if(myDataset[position] is Meal){
-            R.drawable.ic_food
-        }else{
-            R.drawable.ic_exercise
-        })
+        holder.view.tvResultItemTitle.text = myDataset[position].getTitle()
+        holder.view.tvResultItemKcals.text = "${myDataset[position].getKcals()} kcals"
+        holder.view.ivResultItemType.setImageResource(myDataset[position].getIcon())
     }
 
     // Return the size of your dataset (invoked by the layout manager)

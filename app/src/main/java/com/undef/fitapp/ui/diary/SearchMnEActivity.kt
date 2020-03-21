@@ -2,14 +2,9 @@ package com.undef.fitapp.ui.diary
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.undef.fitapp.R
-import com.undef.fitapp.models.Exercise
-import com.undef.fitapp.models.Healthy
-import com.undef.fitapp.models.Meal
 import com.undef.fitapp.ui.custom.MEListAdapter
 
 class SearchMnEActivity : AppCompatActivity() {
@@ -31,12 +26,13 @@ class SearchMnEActivity : AppCompatActivity() {
         diaryViewModel.consumedText.observe(viewLifecycleOwner, Observer {
             tvConsumed.text = it
         })*/
+
         viewManager = LinearLayoutManager(this)
-        viewAdapter = MEListAdapter(mutableListOf<Healthy>(
+        /*viewAdapter = MEListAdapter(mutableListOf<Healthy>(
             Meal(1,"apple",100.0),
             Exercise(2,"Running",-320.1),
             Meal(3,"pear",102.0)
-        ))
+        ))*/
 
         recyclerView = findViewById<RecyclerView>(R.id.rvResultME).apply {
             // use this setting to improve performance if you know that changes
