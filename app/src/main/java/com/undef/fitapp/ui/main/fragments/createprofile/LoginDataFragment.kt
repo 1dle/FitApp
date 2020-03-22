@@ -9,6 +9,9 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.undef.fitapp.R
+import com.undef.fitapp.repositories.LoggedUserRepository
+import kotlinx.android.synthetic.main.fragment_login_data.*
+import kotlinx.android.synthetic.main.fragment_login_data.view.*
 
 class LoginDataFragment : Fragment() {
     override fun onCreateView(
@@ -30,6 +33,16 @@ class LoginDataFragment : Fragment() {
 
         btnNext.setOnClickListener{
             mViewPager.arrowScroll(View.FOCUS_RIGHT)
+
+            //TODO: Warning if the next inputs are empty
+
+            //TODO: Check if empty, or incorrect
+            LoggedUserRepository.instance.preRegUserData.email = etRegEmail.text.toString()
+
+            //TODO: Check if empty
+            LoggedUserRepository.instance.preRegUserData.password = etRegPassword.text.toString()
+
+
         }
     }
 }

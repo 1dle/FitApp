@@ -12,6 +12,9 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.undef.fitapp.R
+import com.undef.fitapp.repositories.LoggedUserRepository
+import kotlinx.android.synthetic.main.fragment_meta_data.*
+import java.util.*
 
 
 class MetadataFragment : Fragment() {
@@ -32,10 +35,17 @@ class MetadataFragment : Fragment() {
 
         btnNext.setOnClickListener{
             mViewPager.arrowScroll(View.FOCUS_RIGHT)
+
+            //TODO: Check inputs
+            LoggedUserRepository.instance.preRegUserData.male = spSex.selectedItem.toString().toLowerCase(Locale.ROOT)
+            LoggedUserRepository.instance.preRegUserData.birthDate = spBirthDate.selectedItem.toString()
+            LoggedUserRepository.instance.preRegUserData.weight = etRegWeight.text.toString().toDouble()
+            LoggedUserRepository.instance.preRegUserData.height = etRegHeight.text.toString().toDouble()
+
         }
 
         //fill spinner with numbers
-        val mspin : Spinner = view.findViewById(R.id.spinnerBirthDate)
+        val mspin : Spinner = view.findViewById(R.id.spBirthDate)
         val items = (1920..2020).toList().toTypedArray()
         val adapter: ArrayAdapter<Int> =
             ArrayAdapter<Int>(activity!!, android.R.layout.simple_spinner_item, items)

@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.undef.fitapp.HomeActivity
 import com.undef.fitapp.R
+import com.undef.fitapp.repositories.LoggedUserRepository
+import kotlinx.android.synthetic.main.fragment_goal.*
 
 
 class GoalFragment : Fragment() {
@@ -31,11 +33,25 @@ class GoalFragment : Fragment() {
 
         val mViewPager : ViewPager = activity!!.findViewById(R.id.viewPagerCP)
 
-        val btnNext : Button = view.findViewById(R.id.btnGDone)
+        rgGoal.setOnCheckedChangeListener { _, i ->
+            LoggedUserRepository.instance.preRegUserData.goal = when(i){
+                R.id.rbGoalLose -> "lose"
+                R.id.rbGoalStay -> "stay"
+                R.id.rbGoalGain -> "gain"
+                else -> "not selected"
+            }
+        }
 
-        btnNext.setOnClickListener{
+
+        btnGDone.setOnClickListener{
+            /*
             val intent = Intent(activity, HomeActivity::class.java)
             startActivity(intent)
+            */
+            //teszthez
+            LoggedUserRepository.instance.preRegUserData.name = ""
+            textView.text = LoggedUserRepository.instance.preRegUserData.toString()
+
         }
 
 

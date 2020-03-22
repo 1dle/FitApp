@@ -10,8 +10,6 @@ import com.undef.fitapp.ui.custom.MEListAdapter
 class SearchMnEActivity : AppCompatActivity() {
     //Search Meal and Exercise Activity
 
-    private lateinit var searchMnEActivity: SearchMnEActivity
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager

@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/spSex"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
@@ -22,52 +22,52 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="@string/sex"
-        app:layout_constraintBottom_toBottomOf="@+id/spinner"
-        app:layout_constraintEnd_toStartOf="@+id/spinner"
-        app:layout_constraintTop_toTopOf="@+id/spinner" />
+        app:layout_constraintBottom_toBottomOf="@+id/spSex"
+        app:layout_constraintEnd_toStartOf="@+id/spSex"
+        app:layout_constraintTop_toTopOf="@+id/spSex" />
 
     <Spinner
-        android:id="@+id/spinnerBirthDate"
+        android:id="@+id/spBirthDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/spSex" />
 
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/labelBirthDate"
-        app:layout_constraintBottom_toBottomOf="@+id/spinnerBirthDate"
-        app:layout_constraintEnd_toStartOf="@+id/spinnerBirthDate"
-        app:layout_constraintTop_toTopOf="@+id/spinnerBirthDate" />
+        app:layout_constraintBottom_toBottomOf="@+id/spBirthDate"
+        app:layout_constraintEnd_toStartOf="@+id/spBirthDate"
+        app:layout_constraintTop_toTopOf="@+id/spBirthDate" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/etRegWeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/labelWeightKg"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerBirthDate"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/spBirthDate" />
 
     <EditText
-        android:id="@+id/editText5"
+        android:id="@+id/etRegHeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/labelHeightCm"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText4"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/etRegWeight" />
 
     <Button
         android:id="@+id/btnMDNext"

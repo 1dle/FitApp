@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <RadioGroup
-        android:id="@+id/radioGroup"
+        android:id="@+id/rgGoal"
         android:layout_width="wrap_content"
         android:layout_height="120dp"
         android:layout_marginTop="120dp"
@@ -28,7 +28,7 @@
             android:text="@string/goalMaintain" />
 
         <RadioButton
-            android:id="@+id/radioButton3"
+            android:id="@+id/rbGoalGain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/goalGain" />
@@ -41,7 +41,7 @@
         android:layout_marginBottom="8dp"
         android:text="@string/goalWeight"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/radioGroup"
+        app:layout_constraintBottom_toTopOf="@+id/rgGoal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
