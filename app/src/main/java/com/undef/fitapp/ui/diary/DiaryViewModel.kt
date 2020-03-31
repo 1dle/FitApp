@@ -8,6 +8,7 @@ import com.undef.fitapp.requests.FitAppServerApi
 import com.undef.fitapp.models.Food
 import com.undef.fitapp.models.FoodNMet
 import com.undef.fitapp.models.Met
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,19 +21,24 @@ class DiaryViewModel : ViewModel() {
     fun changeConsumedText() {
         _consumedText.apply { value = "asd" }
     }*/
-    fun getDailyData(){
+    suspend fun getDailyData(){
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://192.168.1.21:8000")
+            .baseUrl("http://10.0.2.2:45455")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val service: FitAppServerApi = retrofit.create(FitAppServerApi::class.java)
 
-        val call = service.getDaily()
+        val valuesToPost = HashMap<String, Any>()
+        valuesToPost.put("ID",1)
+        valuesToPost.put("Date", "2020-03-15")
+
+
+        val call = service.getDaily(valuesToPost)
 
         call.enqueue( object : Callback<Daily>{
             override fun onFailure(call: Call<Daily>, t: Throwable) {
-
+                print(call.toString())
             }
 
             override fun onResponse(call: Call<Daily>, response: Response<Daily>) {
@@ -41,8 +47,10 @@ class DiaryViewModel : ViewModel() {
                     _remainingText.apply { value = "Remaining: ${response.body()!!.remaining} kcals" }
                     _burnedText.apply { value = "Burned: ${response.body()!!.burned} kcals" }
                     _foodNMet.apply {
-                        value!!.addAll(response.body()!!.foods)
-                        value!!.addAll(response.body()!!.mets)
+                        val newList = mutableListOf<FoodNMet>()
+                        newList.addAll(response.body()!!.foods)
+                        newList.addAll(response.body()!!.mets)
+                        postValue(newList)
                     }
                 }
             }

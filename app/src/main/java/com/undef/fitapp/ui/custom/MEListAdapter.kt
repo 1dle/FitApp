@@ -11,7 +11,7 @@ import com.undef.fitapp.models.Food
 import com.undef.fitapp.models.FoodNMet
 import kotlinx.android.synthetic.main.list_item_mne.view.*
 
-class MEListAdapter(private val myDataset: MutableList<FoodNMet>) :
+class MEListAdapter(private var myDataset: List<FoodNMet>) :
     RecyclerView.Adapter<MEListAdapter.MyViewHolder>() {
 
     // Provide a reference to the views for each data item
@@ -37,11 +37,20 @@ class MEListAdapter(private val myDataset: MutableList<FoodNMet>) :
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         //holder.textView.text = myDataset[position]
-        holder.view.tvResultItemTitle.text = myDataset[position].getTitle()
+        var date = myDataset[position].getDateOfAdd()
+        if(date != null){
+            //ha van dátum akkor az adpter a diary-ban van használva
+            holder.view.tvResultItemTitle.text = myDataset[position].getTitle() + " " + date
+        }else{
+            //ha nincs dátum akkor a keresésnél használjuk ezt az adaptert
+            holder.view.tvResultItemTitle.text = myDataset[position].getTitle()
+        }
+
         holder.view.tvResultItemKcals.text = "${myDataset[position].getKcals()} kcals"
         holder.view.ivResultItemType.setImageResource(myDataset[position].getIcon())
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = myDataset.size
+
 }

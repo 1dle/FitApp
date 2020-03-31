@@ -14,8 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.undef.fitapp.R
+import com.undef.fitapp.models.FoodNMet
 import com.undef.fitapp.ui.custom.MEListAdapter
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DiaryFragment : Fragment() {
 
@@ -46,6 +49,15 @@ class DiaryFragment : Fragment() {
                 pit.first.text = it
             })
         }
+
+
+        recyclerView = root.findViewById(R.id.rvDiaryDaily)
+        diaryViewModel.foodNMet.observe(viewLifecycleOwner, Observer { fnm ->
+            viewManager = LinearLayoutManager(context)
+            viewAdapter = MEListAdapter(fnm)
+            recyclerView.layoutManager = viewManager
+            recyclerView.adapter = viewAdapter
+        })
 
         //test live data
         /*
@@ -91,7 +103,7 @@ class DiaryFragment : Fragment() {
         fabAddExercise.setOnClickListener {
             //Toast.makeText(this,"addExercise", Toast.LENGTH_SHORT).show();
         }
-
+/*
         viewManager = LinearLayoutManager(context)
         viewAdapter = MEListAdapter(diaryViewModel.foodNMet.value!!)
 
@@ -106,7 +118,7 @@ class DiaryFragment : Fragment() {
             // specify an viewAdapter (see also next example)
             adapter = viewAdapter
 
-        }
+        }*/
 
 
     }

@@ -7,12 +7,13 @@ abstract class FoodNMet{
     abstract fun getTitle(): String
     abstract fun getKcals(): String
     abstract fun getIcon(): Int
+    abstract fun getDateOfAdd(): String?
 }
 
 data class Daily(
     @SerializedName("Burned")
     var burned: Double,
-    @SerializedName("Consumed")
+    @SerializedName("Comsumed")
     var consumed: Double,
     @SerializedName("Food")
     var foods: List<Food>,
@@ -27,6 +28,8 @@ data class Food(
     var calories: Double,
     @SerializedName("Carbs")
     var carbs: Double,
+    @SerializedName("Date")
+    var date: String?,
     @SerializedName("Fat")
     var fat: Double,
     @SerializedName("Name")
@@ -41,20 +44,23 @@ data class Food(
     var unit2: String,
     @SerializedName("Unit3")
     var unit3: String
-
-
-
 ): FoodNMet() {
     override fun getTitle() = name
 
     override fun getKcals() = calories.toString()
 
     override fun getIcon() = R.drawable.ic_food
+
+    override fun getDateOfAdd() = date
 }
 
 data class Met(
+    @SerializedName("Date")
+    var date: String?,
     @SerializedName("Detailed")
     var detailed: String,
+    @SerializedName("Duration")
+    var duration: Double,
     @SerializedName("MetNum")
     var metNum: Double
 ): FoodNMet() {
@@ -63,4 +69,6 @@ data class Met(
     override fun getKcals() = metNum.toString()
 
     override fun getIcon() = R.drawable.ic_exercise
+
+    override fun getDateOfAdd() = date
 }
