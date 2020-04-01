@@ -20,7 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DiaryFragment : Fragment() {
+class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
 
     private lateinit var diaryViewModel: DiaryViewModel
 
@@ -54,7 +54,7 @@ class DiaryFragment : Fragment() {
         recyclerView = root.findViewById(R.id.rvDiaryDaily)
         diaryViewModel.foodNMet.observe(viewLifecycleOwner, Observer { fnm ->
             viewManager = LinearLayoutManager(context)
-            viewAdapter = MEListAdapter(fnm)
+            viewAdapter = MEListAdapter(fnm,this)
             recyclerView.layoutManager = viewManager
             recyclerView.adapter = viewAdapter
         })
@@ -120,6 +120,10 @@ class DiaryFragment : Fragment() {
 
         }*/
 
+
+    }
+
+    override fun onMEListItemClick(position: Int) {
 
     }
 }

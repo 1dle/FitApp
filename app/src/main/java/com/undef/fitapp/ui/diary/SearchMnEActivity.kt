@@ -1,6 +1,8 @@
 package com.undef.fitapp.ui.diary
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Parcel
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -11,14 +13,16 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.undef.fitapp.R
+import com.undef.fitapp.models.Food
 import com.undef.fitapp.ui.custom.MEListAdapter
+import com.undef.fitapp.ui.custom.MEListAdapter.OnMEListItemClickListener
 import kotlinx.android.synthetic.main.activity_search_mn_e.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class SearchMnEActivity : AppCompatActivity() {
+class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
     //Search Meal and Exercise Activity
 
     private lateinit var recyclerView: RecyclerView
@@ -27,6 +31,10 @@ class SearchMnEActivity : AppCompatActivity() {
 
 
     private lateinit var viewModel: SearchMnEViewModel
+
+    constructor(parcel: Parcel) : this() {
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +54,7 @@ class SearchMnEActivity : AppCompatActivity() {
         viewModel.searchResults.observe(this, Observer { sr ->
             recyclerView = findViewById(R.id.rvResultME)
             viewManager = LinearLayoutManager(this)
-            viewAdapter = MEListAdapter(sr)
+            viewAdapter = MEListAdapter(sr, this)
             recyclerView.layoutManager = viewManager
             recyclerView.adapter = viewAdapter
         })
@@ -56,6 +64,19 @@ class SearchMnEActivity : AppCompatActivity() {
                 viewModel.getSearchResult(5, etSearchME.text.toString())
             }
 
+        }
+
+
+    }
+
+    override fun onMEListItemClick(position: Int) {
+        if(viewModel.searchResults.value!= null){
+            val f = viewModel.searchResults.value!![position]
+            Toast.makeText(this, f.name, Toast.LENGTH_SHORT).show()
+
+/*
+            val intent = Intent(this, EditMealActivity::class.java)
+            startActivity(intent)*/
         }
 
 
