@@ -37,6 +37,8 @@ class MEListAdapter(private var myDataset: List<FoodNMet>) :
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         //holder.textView.text = myDataset[position]
+
+        /*
         var date = myDataset[position].getDateOfAdd()
         if(date != null){
             //ha van dátum akkor az adpter a diary-ban van használva
@@ -44,8 +46,8 @@ class MEListAdapter(private var myDataset: List<FoodNMet>) :
         }else{
             //ha nincs dátum akkor a keresésnél használjuk ezt az adaptert
             holder.view.tvResultItemTitle.text = myDataset[position].getTitle()
-        }
-
+        }*/
+        holder.view.tvResultItemTitle.text = myDataset[position].getTitle()
         holder.view.tvResultItemKcals.text = "${myDataset[position].getKcals()} kcals"
         holder.view.ivResultItemType.setImageResource(myDataset[position].getIcon())
     }

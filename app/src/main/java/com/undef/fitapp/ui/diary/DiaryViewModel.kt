@@ -8,6 +8,9 @@ import com.undef.fitapp.requests.FitAppServerApi
 import com.undef.fitapp.models.Food
 import com.undef.fitapp.models.FoodNMet
 import com.undef.fitapp.models.Met
+import com.undef.fitapp.requests.ConnectionData
+import com.undef.fitapp.requests.ConnectionData.retrofit
+import com.undef.fitapp.requests.ConnectionData.service
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,12 +25,6 @@ class DiaryViewModel : ViewModel() {
         _consumedText.apply { value = "asd" }
     }*/
     suspend fun getDailyData(){
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:45455")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val service: FitAppServerApi = retrofit.create(FitAppServerApi::class.java)
 
         val valuesToPost = HashMap<String, Any>()
         valuesToPost.put("ID",1)
