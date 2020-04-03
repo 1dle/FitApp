@@ -1,7 +1,9 @@
 package com.undef.fitapp.models
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.undef.fitapp.R
+import kotlinx.android.parcel.Parcelize
 
 abstract class FoodNMet{
     abstract fun getTitle(): String
@@ -22,8 +24,10 @@ data class Daily(
     @SerializedName("Remaining")
     var remaining: Double
 )
-
+@Parcelize
 data class Food(
+    @SerializedName("ID")
+    var id: Int,
     @SerializedName("Calories")
     var calories: Double,
     @SerializedName("Carbs")
@@ -37,14 +41,8 @@ data class Food(
     @SerializedName("Protein")
     var protein: Double,
     @SerializedName("Quantity")
-    var quantity: Double,
-    @SerializedName("Unit1")
-    var unit1: String,
-    @SerializedName("Unit2")
-    var unit2: String,
-    @SerializedName("Unit3")
-    var unit3: String
-): FoodNMet() {
+    var quantity: Double
+): FoodNMet(), Parcelable{
     override fun getTitle() = name
 
     override fun getKcals() = calories.toString()

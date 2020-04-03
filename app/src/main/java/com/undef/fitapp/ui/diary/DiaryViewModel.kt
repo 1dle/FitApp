@@ -27,8 +27,8 @@ class DiaryViewModel : ViewModel() {
     suspend fun getDailyData(){
 
         val valuesToPost = HashMap<String, Any>()
-        valuesToPost.put("ID",1)
-        valuesToPost.put("Date", "2020-03-15")
+        valuesToPost["ID"] = 1
+        valuesToPost["Date"] =  "2020-04-03"
 
 
         val call = service.getDaily(valuesToPost)

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -16,6 +17,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton
 import com.undef.fitapp.R
 import com.undef.fitapp.models.FoodNMet
 import com.undef.fitapp.ui.custom.MEListAdapter
+import kotlinx.android.synthetic.main.fragment_diary.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -98,6 +100,7 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
             //Toast.makeText(this,"addMeal", Toast.LENGTH_SHORT).show();
             val intent = Intent(activity, SearchMnEActivity::class.java)
             startActivity(intent)
+            fab.collapse()
         }
         val fabAddExercise: FloatingActionButton = view.findViewById(R.id.fabAddExercise)
         fabAddExercise.setOnClickListener {
@@ -123,7 +126,22 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
 
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if(activity!!.intent.extras != null)
+            if(activity!!.intent.hasExtra("where"))
+                if(activity!!.intent.getStringExtra("where") == "addmeal"){
+                    //frissites
+                    CoroutineScope(Dispatchers.IO).launch {
+                        diaryViewModel.getDailyData()
+                    }
+                }
+    }
+
     override fun onMEListItemClick(position: Int) {
 
     }
+
+
 }

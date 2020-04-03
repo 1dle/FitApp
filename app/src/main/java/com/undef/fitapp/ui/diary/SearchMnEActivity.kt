@@ -72,11 +72,12 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
     override fun onMEListItemClick(position: Int) {
         if(viewModel.searchResults.value!= null){
             val f = viewModel.searchResults.value!![position]
-            Toast.makeText(this, f.name, Toast.LENGTH_SHORT).show()
-
-/*
+            //Toast.makeText(this, f.name, Toast.LENGTH_SHORT).show()
             val intent = Intent(this, EditMealActivity::class.java)
-            startActivity(intent)*/
+            val bundle = Bundle()
+            bundle.putParcelable("selected_food",f)
+            intent.putExtra("myBundle",bundle)
+            startActivity(intent)
         }
 
 

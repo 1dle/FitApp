@@ -2,6 +2,7 @@ package com.undef.fitapp.requests
 
 import com.undef.fitapp.models.Daily
 import com.undef.fitapp.models.Food
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -19,4 +20,7 @@ interface FitAppServerApi {
 
     @POST("api/Search/Meal")
     fun searchFood(@Body topAndQuery: HashMap<String, Any>): Call<List<Food>>
+
+    @POST("api/Meal")
+    fun addMealToDiary(@Body addMealData: HashMap<String, Any>): Call<Int>
 }
