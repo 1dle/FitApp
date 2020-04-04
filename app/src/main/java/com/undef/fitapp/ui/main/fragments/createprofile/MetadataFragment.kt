@@ -12,7 +12,7 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.undef.fitapp.R
-import com.undef.fitapp.repositories.LoggedUserRepository
+import com.undef.fitapp.repositories.UserDataRepository
 import kotlinx.android.synthetic.main.fragment_meta_data.*
 import java.util.*
 
@@ -37,10 +37,10 @@ class MetadataFragment : Fragment() {
             mViewPager.arrowScroll(View.FOCUS_RIGHT)
 
             //TODO: Check inputs
-            LoggedUserRepository.instance.preRegUserData.male = spSex.selectedItem.toString().toLowerCase(Locale.ROOT)
-            LoggedUserRepository.instance.preRegUserData.birthDate = spBirthDate.selectedItem.toString()
-            LoggedUserRepository.instance.preRegUserData.weight = etRegWeight.text.toString().toDouble()
-            LoggedUserRepository.instance.preRegUserData.height = etRegHeight.text.toString().toDouble()
+            UserDataRepository.preRegUserData.male = spSex.selectedItem.toString().toLowerCase(Locale.ROOT)
+            UserDataRepository.preRegUserData.birthDate = spBirthDate.selectedItem.toString()
+            UserDataRepository.preRegUserData.weight = etRegWeight.text.toString().toDouble()
+            UserDataRepository.preRegUserData.height = etRegHeight.text.toString().toDouble()
 
         }
 

@@ -4,6 +4,16 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
+import com.undef.fitapp.models.UserData
+import com.undef.fitapp.repositories.UserDataRepository
+import com.undef.fitapp.requests.ConnectionData.service
+import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -17,9 +27,43 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
         val btnLogin: Button = findViewById(R.id.btnLogin)
+
+        //fill inputs for testing
         btnLogin.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
+            CoroutineScope(Dispatchers.IO).launch{
+                val respond = loginUser(etLoginMail.text.toString(), etLoginPassword.text.toString())
+
+                if(respond != null){
+                    UserDataRepository.loggedUser = respond
+                }
+
+                withContext(Dispatchers.Main){
+                    if(respond == null){
+                        Toast.makeText(applicationContext, "Bad credentials :(", Toast.LENGTH_SHORT).show()
+                    }else{
+                        Toast.makeText(applicationContext, "${UserDataRepository.loggedUser.name}", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(applicationContext, HomeActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+
+
+    }
+    suspend fun loginUser(email: String, password: String): UserData?{
+        val valuesToPost = HashMap<String, Any>()
+        /*{    "Password": "pasfdsdsadsadsad",
+            "Mail": "kdehsdfgabrecefghjni289@gmail.com"
+        }*/
+        valuesToPost["Mail"] = email
+        valuesToPost["Password"] = password
+
+        val call = service.checkLogin(valuesToPost).awaitResponse()
+        if(call.isSuccessful && call.body()!= null){
+            return call.body()!!
+        }else{
+            return null
         }
 
     }

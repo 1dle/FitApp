@@ -1,9 +1,6 @@
 package com.undef.fitapp.requests
 
-import com.undef.fitapp.models.Daily
-import com.undef.fitapp.models.Food
-import com.undef.fitapp.models.FoodNMet
-import com.undef.fitapp.models.Met
+import com.undef.fitapp.models.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -32,4 +29,7 @@ interface FitAppServerApi {
 
     @POST("api/Exercise")
     fun addExerciseToDiary(@Body addExerciseData: HashMap<String, Any>): Call<Int>
+
+    @POST("api/Login")
+    fun checkLogin(@Body loginData: HashMap<String, Any>): Call<UserData>
 }

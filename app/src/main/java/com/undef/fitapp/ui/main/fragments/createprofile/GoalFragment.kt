@@ -2,17 +2,14 @@ package com.undef.fitapp.ui.main.fragments.createprofile
 
 //import android.support.v4.app.Fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import com.undef.fitapp.HomeActivity
 import com.undef.fitapp.R
-import com.undef.fitapp.repositories.LoggedUserRepository
+import com.undef.fitapp.repositories.UserDataRepository
 import kotlinx.android.synthetic.main.fragment_goal.*
 
 
@@ -34,7 +31,7 @@ class GoalFragment : Fragment() {
         val mViewPager : ViewPager = activity!!.findViewById(R.id.viewPagerCP)
 
         rgGoal.setOnCheckedChangeListener { _, i ->
-            LoggedUserRepository.instance.preRegUserData.goal = when(i){
+            UserDataRepository.preRegUserData.goal = when(i){
                 R.id.rbGoalLose -> "lose"
                 R.id.rbGoalStay -> "stay"
                 R.id.rbGoalGain -> "gain"
@@ -49,8 +46,8 @@ class GoalFragment : Fragment() {
             startActivity(intent)
             */
             //teszthez
-            LoggedUserRepository.instance.preRegUserData.name = ""
-            textView.text = LoggedUserRepository.instance.preRegUserData.toString()
+            UserDataRepository.preRegUserData.name = ""
+            textView.text = UserDataRepository.preRegUserData.toString()
 
         }
 
