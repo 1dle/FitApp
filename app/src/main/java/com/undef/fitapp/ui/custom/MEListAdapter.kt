@@ -5,14 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.undef.fitapp.R
-import com.undef.fitapp.models.Food
 import com.undef.fitapp.models.FoodNMet
 import kotlinx.android.synthetic.main.list_item_mne.view.*
 
-class MEListAdapter(private var myDataset: List<FoodNMet>, private val onMEListItemClickListener: OnMEListItemClickListener) :
+class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode: SearchMode, private val onMEListItemClickListener: OnMEListItemClickListener) :
     RecyclerView.Adapter<MEListAdapter.MyViewHolder>() {
 
     // Provide a reference to the views for each data item
@@ -57,11 +55,23 @@ class MEListAdapter(private var myDataset: List<FoodNMet>, private val onMEListI
             //ha nincs dátum akkor a keresésnél használjuk ezt az adaptert
             holder.view.tvResultItemTitle.text = myDataset[position].getTitle()
         }*/
+
         holder.view.tvResultItemTitle.text = myDataset[position].getTitle()
-        holder.view.tvResultItemKcals.text = "${myDataset[position].getKcals()} kcals"
         holder.view.ivResultItemType.setImageResource(myDataset[position].getIcon())
 
+        when(searchMode){
+            SearchMode.MEAL -> holder.view.tvResultItemKcals.text = "${myDataset[position].getKcals()} kcals"
+            SearchMode.EXERCISE -> holder.view.tvResultItemKcals.text = ""
+            SearchMode.NONE -> {
+                //On DiaryFragment the kcals with negative sign
+                if(myDataset[position].type == ItemType.EXERCISE){
+                    holder.view.tvResultItemKcals.text = "- ${myDataset[position].getKcals()} kcals"
+                }else{
+                    holder.view.tvResultItemKcals.text = "${myDataset[position].getKcals()} kcals"
+                }
 
+            }
+        }
 
         holder.view.setOnClickListener {
             holder.onMEListItemClickListener.onMEListItemClick(position)

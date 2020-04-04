@@ -3,6 +3,7 @@ package com.undef.fitapp.models
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.undef.fitapp.R
+import com.undef.fitapp.ui.custom.ItemType
 import kotlinx.android.parcel.Parcelize
 
 abstract class FoodNMet{
@@ -10,6 +11,7 @@ abstract class FoodNMet{
     abstract fun getKcals(): String
     abstract fun getIcon(): Int
     abstract fun getDateOfAdd(): String?
+    abstract val type: ItemType
 }
 
 data class Daily(
@@ -50,16 +52,21 @@ data class Food(
     override fun getIcon() = R.drawable.ic_food
 
     override fun getDateOfAdd() = date
+
+    override val type: ItemType
+        get() = ItemType.FOOD
 }
 
 data class Met(
+    @SerializedName("ID")
+    var id: Int,
     @SerializedName("Date")
     var date: String?,
     @SerializedName("Detailed")
     var detailed: String,
     @SerializedName("Duration")
     var duration: Double,
-    @SerializedName("MetNum")
+    @SerializedName("MetNum", alternate = arrayOf<String>("MET"))
     var metNum: Double
 ): FoodNMet() {
     override fun getTitle() = detailed
@@ -69,4 +76,7 @@ data class Met(
     override fun getIcon() = R.drawable.ic_exercise
 
     override fun getDateOfAdd() = date
+
+    override val type: ItemType
+        get() = ItemType.EXERCISE
 }
