@@ -62,12 +62,17 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
 
 
         if(searchMode == SearchMode.MEAL){
+            //set title of toolbar
+            title = "Search Meal"
+
             viewModel.foodSearchResults.observe(this, Observer { sr ->
                 viewAdapter = MEListAdapter(sr, searchMode,this)
                 recyclerView.layoutManager = viewManager
                 recyclerView.adapter = viewAdapter
             })
         }else{
+            title = "Search Exercise"
+
             viewModel.exerciseSearchResults.observe(this, Observer { sr ->
                 viewAdapter = MEListAdapter(sr, searchMode, this)
                 recyclerView.layoutManager = viewManager
