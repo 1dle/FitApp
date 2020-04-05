@@ -62,9 +62,9 @@ class DiaryViewModel : ViewModel() {
 
             override fun onResponse(call: Call<Daily>, response: Response<Daily>) {
                 if(response.isSuccessful){
-                    _consumedText.apply { value = "Consumed: ${response.body()!!.consumed} kcals"}
-                    _remainingText.apply { value = "Remaining: ${response.body()!!.remaining} kcals" }
-                    _burnedText.apply { value = "Burned: ${response.body()!!.burned} kcals" }
+                    _consumedText.apply { value = "Consumed: %.2f kcals".format(response.body()!!.consumed)}
+                    _remainingText.apply { value = "Remaining: %.2f kcals".format(response.body()!!.remaining) }
+                    _burnedText.apply { value = "Burned: %.2f kcals".format(response.body()!!.burned) }
                     _foodNMet.apply {
                         val newList = mutableListOf<FoodNMet>()
                         newList.addAll(response.body()!!.foods)
