@@ -1,6 +1,7 @@
 package com.undef.fitapp.ui.custom
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -64,9 +65,9 @@ class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode
 
         when(searchMode){
             SearchMode.MEAL -> {holder.view.tvResultItemKcals.text = "${myDataset[position].getKcals()} kcals in 100g"
-                                holder.view.tvResultItemAdditional.visibility = TextView.INVISIBLE}
-            SearchMode.EXERCISE -> {holder.view.tvResultItemKcals.visibility = TextView.INVISIBLE
-                                    holder.view.tvResultItemAdditional.visibility = TextView.INVISIBLE}
+                                holder.view.tvResultItemAdditional.visibility = TextView.GONE}
+            SearchMode.EXERCISE -> {holder.view.tvResultItemKcals.visibility = TextView.GONE
+                                    holder.view.tvResultItemAdditional.visibility = TextView.GONE}
             SearchMode.NONE -> {
                 //On DiaryFragment the kcals with negative sign
                 if(myDataset[position].type == ItemType.EXERCISE){
@@ -78,6 +79,10 @@ class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode
                 }
 
             }
+        }
+
+        if(position%2 == 0){
+            holder.view.setBackgroundColor(Color.parseColor("#dedede"))
         }
 
         holder.view.setOnClickListener {
