@@ -3,6 +3,8 @@ import com.google.gson.annotations.SerializedName
 
 
 data class UserData(
+    @SerializedName("ID")
+    var id: Int,
     @SerializedName("BirthDate")
     var birthDate: String,
     @SerializedName("Email")
@@ -22,6 +24,7 @@ data class UserData(
     @SerializedName("Goal")
     var goal: String
 ) {
+
     override fun toString(): String {
         return "UserData(birthDate='$birthDate', email='$email', height=$height, male='$male', name='$name', password='$password', registerDate='$registerDate', weight=$weight, goal='$goal')"
     }

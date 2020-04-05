@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -11,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import com.undef.fitapp.HomeActivity
 import com.undef.fitapp.R
 import com.undef.fitapp.models.Food
+import com.undef.fitapp.repositories.UserDataRepository
 import com.undef.fitapp.requests.ConnectionData
 import kotlinx.android.synthetic.main.activity_edit_meal.*
 import kotlinx.coroutines.*
@@ -32,12 +35,31 @@ class EditMealActivity : AppCompatActivity() {
 
         val bundle = intent.getBundleExtra("myBundle")!!
         val food  = bundle.getParcelable<Food>("selected_food")!!
+        val addDate = intent.getStringExtra("add_date")
 
-            tvEditMealName.text = food.name
-            tvEditMealCalories.text = "Calories: ${food.calories} kcals"
-            tvEditMealProtein.text = "Protein: ${food.protein} g"
-            tvEditMealNetCarbs.text = "Net Carbs: ${food.carbs} g"
-            tvEditMealFat.text = "Fat: ${food.fat} g"
+        //initial values
+        tvEditMealName.text = food.name
+        tvEditMealCalories.text = "Calories: %.2f kcals".format(food.calories/100)
+        tvEditMealProtein.text = "Protein: %.2f g".format(food.protein/100)
+        tvEditMealNetCarbs.text = "Net Carbs: %.2f g".format(food.carbs/100)
+        tvEditMealFat.text = "Fat: %.2f g".format(food.fat/100)
+
+        var amount = 0.0
+
+        etEditMealAmount.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if(s.toString() != ""){
+                    amount = s.toString().toDouble()
+                    //real time calculate fields
+                    tvEditMealCalories.text = "Calories: %.2f kcals".format(food.calories/100*amount)
+                    tvEditMealProtein.text = "Protein: %.2f g".format(food.protein/100*amount)
+                    tvEditMealNetCarbs.text = "Net Carbs: %.2f g".format(food.carbs/100*amount)
+                    tvEditMealFat.text = "Fat: %.2f g".format(food.fat/100*amount)
+                }
+            }
+        })
 
         val sdf = SimpleDateFormat("HH:mm")
         sdf.timeZone = TimeZone.getTimeZone("GMT");
@@ -51,10 +73,10 @@ class EditMealActivity : AppCompatActivity() {
                 //make object that post
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    val statusCode = postMealToServer(1,
+                    val statusCode = postMealToServer(UserDataRepository.loggedUser.id,
                         food.id,
-                        etEditMealAmount.text.toString().toDouble(),
-                        "2020-04-03")
+                        amount/100,
+                        addDate)
 
                     if(statusCode == 1){
                         //ha sikeresen hozzá lett adva

@@ -3,6 +3,7 @@ package com.undef.fitapp.models
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.undef.fitapp.R
+import com.undef.fitapp.repositories.UserDataRepository
 import com.undef.fitapp.ui.custom.ItemType
 import kotlinx.android.parcel.Parcelize
 
@@ -71,7 +72,8 @@ data class Met(
 ): FoodNMet() {
     override fun getTitle() = detailed
 
-    override fun getKcals() = metNum.toString()
+    //min * (MET * kg * 3.5) / 200
+    override fun getKcals() = String.format("%.2f",duration  * (metNum * UserDataRepository.loggedUser.weight * 3.5) / 200)
 
     override fun getIcon() = R.drawable.ic_exercise
 

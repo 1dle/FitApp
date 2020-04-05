@@ -82,6 +82,7 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
             //Toast.makeText(this,"addMeal", Toast.LENGTH_SHORT).show();
             val intent = Intent(activity, SearchMnEActivity::class.java)
             intent.putExtra("search_mode", SearchMode.MEAL)
+            intent.putExtra("add_date", diaryViewModel.selectedDateAsString(DiaryViewModel.DatePurpose.SERVER))
             startActivity(intent)
             fab.collapse()
         }
@@ -89,6 +90,7 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
         fabAddExercise.setOnClickListener {
             val intent = Intent(activity, SearchMnEActivity::class.java)
             intent.putExtra("search_mode", SearchMode.EXERCISE)
+            intent.putExtra("add_date", diaryViewModel.selectedDateAsString(DiaryViewModel.DatePurpose.SERVER))
             startActivity(intent)
             fab.collapse()
         }

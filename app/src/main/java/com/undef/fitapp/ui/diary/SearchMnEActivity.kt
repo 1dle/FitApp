@@ -17,6 +17,7 @@ import com.afollestad.materialdialogs.customview.customView
 import com.undef.fitapp.HomeActivity
 import com.undef.fitapp.R
 import com.undef.fitapp.models.Food
+import com.undef.fitapp.repositories.UserDataRepository
 import com.undef.fitapp.requests.ConnectionData
 import com.undef.fitapp.ui.custom.MEListAdapter
 import com.undef.fitapp.ui.custom.MEListAdapter.OnMEListItemClickListener
@@ -27,6 +28,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.awaitResponse
+import java.util.*
+import kotlin.collections.HashMap
 
 
 class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
@@ -41,6 +44,8 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
 
     private lateinit var searchMode: SearchMode
 
+    private lateinit var addDate: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_mn_e)
@@ -51,8 +56,14 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
             supportActionBar!!.setDisplayShowHomeEnabled(true)
         }
         //inititalize searchMode
-        if(intent.extras != null && intent.hasExtra("search_mode")){
-            searchMode = intent.getSerializableExtra("search_mode") as SearchMode
+        if(intent.extras != null){
+            if(intent.hasExtra("search_mode")){
+                searchMode = intent.getSerializableExtra("search_mode") as SearchMode
+            }
+            if(intent.hasExtra("add_date")){
+                addDate = intent.getStringExtra("add_date")!!
+            }
+
         }
 
 
@@ -100,6 +111,7 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
                 val bundle = Bundle()
                 bundle.putParcelable("selected_food",f as Food) //todo :: hiba
                 intent.putExtra("myBundle",bundle)
+                intent.putExtra("add_date", addDate)
                 startActivity(intent)
             }
             SearchMode.EXERCISE -> if(viewModel.exerciseSearchResults.value!= null){
@@ -124,7 +136,7 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
                         //todo: calculate burned calories -save into tvDialogExerciseBurnedKcals
                         //item.Duration * (item.MetNum * weight * 3.5) / 200.0
                         if(s.toString()!= ""){
-                            val burnedKcals = (s.toString().toDouble() * exercise.metNum * 97.0 * 3.5) / 200
+                            val burnedKcals = (s.toString().toDouble() * exercise.metNum * UserDataRepository.loggedUser.weight * 3.5) / 200
                             tvBurned.text = "${burnedKcals} kcals burned"
                         }
 
@@ -143,9 +155,9 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
                         }*/
                         CoroutineScope(Dispatchers.IO).launch{
                             val statusCode =
-                                postExerciseToServer(1,
+                                postExerciseToServer(UserDataRepository.loggedUser.id,
                                     exercise.id,
-                                    "2020-04-03",
+                                    addDate,
                                     dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).text.toString().toDouble())
 
                             if(statusCode == 1){
