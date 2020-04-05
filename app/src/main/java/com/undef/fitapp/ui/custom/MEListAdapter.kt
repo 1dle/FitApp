@@ -5,9 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.undef.fitapp.R
+import com.undef.fitapp.models.Food
 import com.undef.fitapp.models.FoodNMet
+import com.undef.fitapp.models.Met
 import kotlinx.android.synthetic.main.list_item_mne.view.*
 
 class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode: SearchMode, private val onMEListItemClickListener: OnMEListItemClickListener) :
@@ -60,14 +63,18 @@ class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode
         holder.view.ivResultItemType.setImageResource(myDataset[position].getIcon())
 
         when(searchMode){
-            SearchMode.MEAL -> holder.view.tvResultItemKcals.text = "${myDataset[position].getKcals()} kcals"
-            SearchMode.EXERCISE -> holder.view.tvResultItemKcals.text = ""
+            SearchMode.MEAL -> {holder.view.tvResultItemKcals.text = "${myDataset[position].getKcals()} kcals in 100g"
+                                holder.view.tvResultItemAdditional.visibility = TextView.INVISIBLE}
+            SearchMode.EXERCISE -> {holder.view.tvResultItemKcals.visibility = TextView.INVISIBLE
+                                    holder.view.tvResultItemAdditional.visibility = TextView.INVISIBLE}
             SearchMode.NONE -> {
                 //On DiaryFragment the kcals with negative sign
                 if(myDataset[position].type == ItemType.EXERCISE){
                     holder.view.tvResultItemKcals.text = "- ${myDataset[position].getKcals()} kcals"
+                    holder.view.tvResultItemAdditional.text = "%.1f minutes".format((myDataset[position] as Met).duration)
                 }else{
-                    holder.view.tvResultItemKcals.text = "${myDataset[position].getKcals()} kcals"
+                    holder.view.tvResultItemKcals.text = "%.2f kcals".format((myDataset[position] as Food).let{ it.quantity * it.calories })
+                    holder.view.tvResultItemAdditional.text = "%.1f grams".format((myDataset[position] as Food).let{ it.quantity * 100})
                 }
 
             }
