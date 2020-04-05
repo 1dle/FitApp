@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -23,11 +24,13 @@ import com.undef.fitapp.ui.custom.MEListAdapter
 import com.undef.fitapp.ui.custom.MEListAdapter.OnMEListItemClickListener
 import com.undef.fitapp.ui.custom.SearchMode
 import kotlinx.android.synthetic.main.activity_search_mn_e.*
+import kotlinx.android.synthetic.main.dialog_edit_exercise.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.awaitResponse
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -143,21 +146,30 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
 
                     }
                 })
+                val sdf = SimpleDateFormat("HH:mm")
+                sdf.timeZone = TimeZone.getTimeZone("GMT");
+                dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).setText(sdf.format(Calendar.getInstance().time))
 
+                dialog.findViewById<TextView>(R.id.tvDialogExerciseDate).text = addDate
                 dialog.findViewById<TextView>(R.id.btnExerciseDialogAdd).setOnClickListener {
                     //todo: check inputs aren't empty, and post to server
-                    if(tvBurned.text.toString()!=""){
+                    if(tvBurned.text.toString()!="" && dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).text.toString()!=""){
                         /*{
                             "Person_ID": 1,
                             "Mets_ID": 1003,
                             "Date": "2020-04-04T16:24:59.297Z",
                             "Duration": 10
                         }*/
+                        /* add time to date
+                        SimpleDateFormat("yyyy-MM-dd").parse(addDate).toCalendar().apply {
+                                    this!!.set(Calendar.HOUR_OF_DAY, etEditMealTimeStamp.text.toString().split(":")[0].toInt())
+                                    this!!.set(Calendar.MINUTE, etEditMealTimeStamp.text.toString().split(":")[1].toInt()) }!!.time)
+                         */
                         CoroutineScope(Dispatchers.IO).launch{
                             val statusCode =
                                 postExerciseToServer(UserDataRepository.loggedUser.id,
                                     exercise.id,
-                                    addDate,
+                                    "${addDate}T${dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).text.toString()}:00",
                                     dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).text.toString().toDouble())
 
                             if(statusCode == 1){

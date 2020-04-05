@@ -22,6 +22,10 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -65,6 +69,16 @@ class DiaryViewModel : ViewModel() {
                         val newList = mutableListOf<FoodNMet>()
                         newList.addAll(response.body()!!.foods)
                         newList.addAll(response.body()!!.mets)
+
+                        //order list by date (feltöltéskor nincs felvive a timestamp)
+                        newList.apply{
+                            sortBy {
+                                it.getDateOfAdd().let{
+                                    val parser =  SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                                    parser.parse(it)
+                                }
+                            }
+                        }
                         postValue(newList)
                     }
                 }

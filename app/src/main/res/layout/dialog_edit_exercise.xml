@@ -31,24 +31,21 @@
 
     <EditText
         android:id="@+id/etDialogExerciseMinutes"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="numberDecimal"
         android:textAlignment="textEnd"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDialogExerciseDescription" />
+        app:layout_constraintStart_toStartOf="@+id/etDialogExerciseTimestamp"
+        app:layout_constraintTop_toBottomOf="@+id/etDialogExerciseTimestamp" />
 
     <TextView
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="minutes"
+        android:text="duration (min): "
         app:layout_constraintBottom_toBottomOf="@+id/etDialogExerciseMinutes"
-        app:layout_constraintStart_toEndOf="@+id/etDialogExerciseMinutes"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/etDialogExerciseMinutes" />
 
     <TextView
@@ -60,7 +57,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/textView10"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView10"
+        app:layout_constraintStart_toEndOf="@+id/etDialogExerciseMinutes"
         app:layout_constraintTop_toTopOf="@+id/textView10" />
 
 
@@ -107,5 +104,35 @@
         android:background="?android:attr/listDivider"
         app:layout_constraintTop_toBottomOf="@+id/tvDialogExerciseTitle"
         tools:layout_editor_absoluteX="1dp" />
+
+    <EditText
+        android:id="@+id/etDialogExerciseTimestamp"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:ems="10"
+        android:inputType="time"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/tvDialogExerciseDescription" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Timestamp: "
+        app:layout_constraintBottom_toBottomOf="@+id/etDialogExerciseTimestamp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etDialogExerciseTimestamp" />
+
+    <TextView
+        android:id="@+id/tvDialogExerciseDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2020-04-02"
+        app:layout_constraintBottom_toBottomOf="@+id/etDialogExerciseTimestamp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/etDialogExerciseTimestamp"
+        app:layout_constraintTop_toTopOf="@+id/etDialogExerciseTimestamp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

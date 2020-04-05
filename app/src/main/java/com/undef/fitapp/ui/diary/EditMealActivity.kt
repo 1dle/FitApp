@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -67,16 +68,20 @@ class EditMealActivity : AppCompatActivity() {
 
         btnEditMealSave.text = "Add meal"
 
+        tvEditMealDate.text = addDate
+
         btnEditMealSave.setOnClickListener{
-            if(etEditMealAmount.text.toString() != ""){
+            if(etEditMealAmount.text.toString() != "" && etEditMealTimeStamp.text.toString()!="" ){
                 //post meal to server
                 //make object that post
 
                 CoroutineScope(Dispatchers.IO).launch {
                     val statusCode = postMealToServer(UserDataRepository.loggedUser.id,
                         food.id,
-                        amount/100,
-                        addDate)
+                        amount/100.0,
+                        //add time to date for later option to sort by date of add
+                        "%sT%s:00".format(addDate, etEditMealTimeStamp.text.toString())
+                    )
 
                     if(statusCode == 1){
                         //ha sikeresen hozzá lett adva

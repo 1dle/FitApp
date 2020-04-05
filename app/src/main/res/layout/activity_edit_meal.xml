@@ -57,8 +57,8 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="time"
-        app:layout_constraintStart_toStartOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintStart_toStartOf="@+id/tvEditMealDate"
+        app:layout_constraintTop_toBottomOf="@+id/tvEditMealDate" />
 
     <TextView
         android:id="@+id/textView9"
@@ -142,5 +142,24 @@
         android:text="grams"
         app:layout_constraintStart_toStartOf="@+id/etEditMealAmount"
         app:layout_constraintTop_toBottomOf="@+id/etEditMealAmount" />
+
+    <TextView
+        android:id="@+id/tvEditMealDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="Date: "
+        app:layout_constraintBottom_toBottomOf="@+id/tvEditMealDate"
+        app:layout_constraintEnd_toStartOf="@+id/tvEditMealDate"
+        app:layout_constraintTop_toTopOf="@+id/tvEditMealDate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
