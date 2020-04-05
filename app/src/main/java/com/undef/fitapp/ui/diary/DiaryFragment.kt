@@ -12,6 +12,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.datetime.datePicker
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.undef.fitapp.R
 import com.undef.fitapp.ui.custom.MEListAdapter
@@ -20,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_diary.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
 
@@ -51,6 +54,10 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
             })
         }
 
+        diaryViewModel.selectedDate.observe(viewLifecycleOwner, Observer {
+            tvDiaryDate.text = diaryViewModel.selectedDateAsString()
+        })
+
 
         recyclerView = root.findViewById(R.id.rvDiaryDaily)
         diaryViewModel.foodNMet.observe(viewLifecycleOwner, Observer { fnm ->
@@ -59,30 +66,6 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
             recyclerView.layoutManager = viewManager
             recyclerView.adapter = viewAdapter
         })
-
-        //test live data
-        /*
-        liveDailyStats[0].first.setOnClickListener {
-            diaryViewModel.changeConsumedText();
-        }*/
-
-        /*
-        // the forEach is same as these lines but shorter
-        // Consumed kcals from viewmodel
-        val tvConsumed: TextView = root.findViewById(R.id.tvConsumed)
-        diaryViewModel.consumedText.observe(viewLifecycleOwner, Observer {
-            tvConsumed.text = it
-        })
-        //Burned kcals
-        val tvBurned: TextView = root.findViewById(R.id.tvBurned)
-        diaryViewModel.burnedText.observe(viewLifecycleOwner, Observer {
-            tvBurned.text = it
-        })
-        //Remaining kcals
-        val tvRemaining: TextView = root.findViewById(R.id.tvRemaining)
-        diaryViewModel.remainingText.observe(viewLifecycleOwner, Observer {
-            tvRemaining.text = it
-        })*/
 
         return root
     }
@@ -109,22 +92,21 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
             startActivity(intent)
             fab.collapse()
         }
-/*
-        viewManager = LinearLayoutManager(context)
-        viewAdapter = MEListAdapter(diaryViewModel.foodNMet.value!!)
 
-        recyclerView = view.findViewById<RecyclerView>(R.id.rvDiaryDaily).apply {
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
-            setHasFixedSize(true)
+        btnPrevDate.setOnClickListener {
+            diaryViewModel.incrementDate(-1)
+        }
+        btnNextDate.setOnClickListener {
+            diaryViewModel.incrementDate(1)
+        }
+        tvDiaryDate.setOnClickListener {
+            MaterialDialog(view.context).show {
 
-            // use a linear layout manager
-            layoutManager = viewManager
-
-            // specify an viewAdapter (see also next example)
-            adapter = viewAdapter
-
-        }*/
+                datePicker(currentDate = diaryViewModel.selectedDate.value!!.toCalendar() ){ dialog, datetime ->
+                    diaryViewModel.setDate(datetime.time)
+                }
+            }
+        }
 
 
     }

@@ -11,12 +11,19 @@ import com.undef.fitapp.models.Met
 import com.undef.fitapp.requests.ConnectionData
 import com.undef.fitapp.requests.ConnectionData.retrofit
 import com.undef.fitapp.requests.ConnectionData.service
+import kotlinx.android.synthetic.main.activity_edit_meal.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.HashMap
 
 
 class DiaryViewModel : ViewModel() {
@@ -24,11 +31,22 @@ class DiaryViewModel : ViewModel() {
     fun changeConsumedText() {
         _consumedText.apply { value = "asd" }
     }*/
+
+    enum class DatePurpose{
+        UI,
+        SERVER
+    }
+
+    private val calendar = Calendar.getInstance()
+    private val todaysDate = Calendar.getInstance().time
+
+
+
     suspend fun getDailyData(){
 
         val valuesToPost = HashMap<String, Any>()
         valuesToPost["ID"] = 1
-        valuesToPost["Date"] =  "2020-04-03"
+        valuesToPost["Date"] = selectedDateAsString(DatePurpose.SERVER)
 
 
         val call = service.getDaily(valuesToPost)
@@ -68,14 +86,55 @@ class DiaryViewModel : ViewModel() {
     private val _foodNMet = MutableLiveData<MutableList<FoodNMet>>().apply {
         value = mutableListOf<FoodNMet>()
     }
+    private val _selectedDate = MutableLiveData<Date>().apply {
+        value = todaysDate
+    }
 
     val consumedText: LiveData<String> = _consumedText
     val burnedText: LiveData<String> = _burnedText
     val remainingText: LiveData<String> = _remainingText
     val foodNMet: LiveData<MutableList<FoodNMet>> = _foodNMet
+    val selectedDate: LiveData<Date> = _selectedDate
 
+    fun selectedDateAsString(purpose: DatePurpose = DatePurpose.UI): String{
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+        sdf.timeZone = TimeZone.getTimeZone("GMT")
+        if(_selectedDate.value == todaysDate && purpose == DatePurpose.UI){
+            return "Today"
+        }else{
+            return sdf.format(_selectedDate.value)
+        }
 
+    }
 
+    fun incrementDate(increment: Int){
+        /*calendar.time = _selectedDate.value
 
+        if(increment == -1){
+            //previous day
+            calendar.add(Calendar.DATE, -1)
+        }else{
+            //next day
+            calendar.add(Calendar.DATE, 1)
+        }
+        setDate(calendar.time)*/
+        setDate(_selectedDate.value!!.toCalendar()!!.let{
+            it.add(Calendar.DATE, increment)
+            it.time
+        })
+    }
+    fun setDate(date: Date){
+        _selectedDate.apply {
+            value = date
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            getDailyData()
+        }
+    }
 
+}
+fun Date.toCalendar(): Calendar? {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    return cal
 }
