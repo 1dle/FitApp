@@ -29,4 +29,7 @@ interface FitAppServerApi {
 
     @POST("api/Login")
     fun checkLogin(@Body loginData: HashMap<String, Any>): Call<UserData>
+
+    @POST("api/Person")
+    fun registerUser(@Body userData: UserData): Call<Int>
 }

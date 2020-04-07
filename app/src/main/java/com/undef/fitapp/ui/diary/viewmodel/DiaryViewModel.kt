@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.undef.fitapp.api.model.Daily
 import com.undef.fitapp.api.model.FoodNMet
 import com.undef.fitapp.api.repositories.MyCalendar
+import com.undef.fitapp.api.repositories.UserDataRepository
 import com.undef.fitapp.api.repositories.toCalendar
 import com.undef.fitapp.api.repositories.toDateTime
 import com.undef.fitapp.api.service.ConnectionData.service
@@ -30,7 +31,7 @@ class DiaryViewModel : ViewModel() {
     suspend fun getDailyData(){
 
         val valuesToPost = HashMap<String, Any>()
-        valuesToPost["ID"] = 1
+        valuesToPost["ID"] = UserDataRepository.loggedUser.id
         valuesToPost["Date"] = selectedDateAsString(DatePurpose.SERVER)
 
 

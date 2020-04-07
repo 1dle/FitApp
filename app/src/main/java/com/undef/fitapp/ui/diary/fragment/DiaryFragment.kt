@@ -2,6 +2,7 @@ package com.undef.fitapp.ui.diary.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.datePicker
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.undef.fitapp.R
+import com.undef.fitapp.api.repositories.UserDataRepository
 import com.undef.fitapp.api.repositories.toCalendar
 import com.undef.fitapp.custom.MEListAdapter
 import com.undef.fitapp.custom.SearchMode
@@ -74,6 +76,8 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Log.d("LOGGED_USER", UserDataRepository.loggedUser.toString())
 
         CoroutineScope(Dispatchers.IO).launch {
             diaryViewModel.getDailyData()

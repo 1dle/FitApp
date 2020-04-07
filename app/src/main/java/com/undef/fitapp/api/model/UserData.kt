@@ -23,9 +23,4 @@ data class UserData(
     var weight: Double,
     @SerializedName("Goal")
     var goal: Int
-) {
-
-    override fun toString(): String {
-        return "UserData(birthDate='$birthDate', email='$email', height=$height, male='$male', name='$name', password='$password', registerDate='$registerDate', weight=$weight, goal='$goal')"
-    }
-}
+)

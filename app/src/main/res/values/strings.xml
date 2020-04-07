@@ -43,8 +43,8 @@
     <string name="uiDone">Done</string>
     <string name="goalWeight">"Weight goal: "</string>
     <string name="uiNextArrow"><![CDATA[->]]></string>
-    <string name="sex">"Sex: "</string>
-    <string name="labelBirthDate">"Birth Date: "</string>
+    <string name="sex">"Gender: "</string>
+    <string name="labelBirthDate">"DOB (Year/Month/Day) "</string>
     <string name="labelWeightKg">Weight (kg)</string>
     <string name="labelHeightCm">Height (cm)</string>
     <string name="fill_all_input">Fill all input fields!</string>

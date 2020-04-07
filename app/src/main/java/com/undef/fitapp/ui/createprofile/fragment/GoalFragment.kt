@@ -1,6 +1,8 @@
 package com.undef.fitapp.ui.createprofile.fragment
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +11,20 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.undef.fitapp.R
+import com.undef.fitapp.api.model.UserData
 import com.undef.fitapp.api.repositories.MyCalendar
 import com.undef.fitapp.api.repositories.MyCalendar.dateToString
 import com.undef.fitapp.api.repositories.MyCalendar.getCurrentDate
 import com.undef.fitapp.api.repositories.MyCalendar.today
 import com.undef.fitapp.api.repositories.UserDataRepository
+import com.undef.fitapp.api.service.ConnectionData
+import com.undef.fitapp.ui.diary.HomeActivity
 import kotlinx.android.synthetic.main.fragment_goal.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.awaitResponse
 
 
 class GoalFragment : Fragment() {
@@ -45,15 +55,28 @@ class GoalFragment : Fragment() {
 
 
         btnGDone.setOnClickListener{
-            /*
-            val intent = Intent(activity, HomeActivity::class.java)
-            startActivity(intent)
-            */
-            //teszthez
             if(rgGoal.checkedRadioButtonId != -1){
                 UserDataRepository.preRegUserData.registerDate = dateToString(getCurrentDate())
 
-                //todo: post registration to server, get the id and redirect to homeActvitiy
+                CoroutineScope(Dispatchers.IO).launch{
+                    val response = ConnectionData.service.registerUser(UserDataRepository.preRegUserData).awaitResponse()
+                    if(response.isSuccessful){
+                        if(response.body()!=null && response.body()!! > 1){
+                            //register successful and response contains the regustered users id
+                            UserDataRepository.loggedUser = UserDataRepository.preRegUserData.copy(id = response.body()!!)
+
+                            withContext(Dispatchers.Main){
+                                //launch Home activity
+                                val intent = Intent(activity, HomeActivity::class.java)
+                                startActivity(intent)
+
+                            }
+
+                        }else{
+                            //todo :ha nem sikerül a reg
+                        }
+                    }
+                }
 
             }else{
                 Toast.makeText(context, "Select a goal!", Toast.LENGTH_SHORT).show()

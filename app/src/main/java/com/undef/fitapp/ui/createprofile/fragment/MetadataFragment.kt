@@ -3,6 +3,7 @@ package com.undef.fitapp.ui.createprofile.fragment
 //import android.support.v4.app.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,10 +35,26 @@ class MetadataFragment : Fragment() {
 
         val btnNext : Button = view.findViewById(R.id.btnMDNext)
 
+        //fill spinners
+        spBirthDateYear.apply {
+            adapter = ArrayAdapter<Int>(context, android.R.layout.simple_spinner_item, (1920..2020).toList())
+            setSelection(adapter.count/2)
+        }
+        spBirthDateMonth.apply {
+            adapter = ArrayAdapter<Int>(context, android.R.layout.simple_spinner_item, (1..12).toList())
+            setSelection(0)
+        }
+        spBirthDateDay.apply {
+            //februárban is 31 nap van :( todo: fix
+            adapter = ArrayAdapter<Int>(context, android.R.layout.simple_spinner_item, (1..31).toList())
+            setSelection(0)
+        }
+
+
         btnNext.setOnClickListener{
 
             UserDataRepository.preRegUserData.male = spSex.selectedItem.toString().toLowerCase(Locale.ROOT)
-            UserDataRepository.preRegUserData.birthDate = spBirthDate.selectedItem.toString()
+            UserDataRepository.preRegUserData.birthDate = "%d-%02d-%02d".format(spBirthDateYear.selectedItem,spBirthDateMonth.selectedItem, spBirthDateDay.selectedItem)
 
             if(!etRegWeight.text.isNullOrEmpty() && !etRegWeight.text.isNullOrEmpty() && !etRegName.text.isNullOrEmpty()){
                 UserDataRepository.preRegUserData.name = etRegName.text.toString()
@@ -51,13 +68,5 @@ class MetadataFragment : Fragment() {
 
 
         }
-
-        //fill spinner with numbers
-        val mspin : Spinner = view.findViewById(R.id.spBirthDate)
-        val items = (1920..2020).toList().toTypedArray()
-        val adapter: ArrayAdapter<Int> =
-            ArrayAdapter<Int>(activity!!, android.R.layout.simple_spinner_item, items)
-        mspin.adapter = adapter
-        mspin.setSelection(items.size/2)
     }
 }

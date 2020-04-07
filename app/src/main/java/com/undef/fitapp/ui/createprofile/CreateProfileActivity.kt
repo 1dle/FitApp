@@ -11,6 +11,7 @@ import com.undef.fitapp.R
 import com.undef.fitapp.ui.createprofile.fragment.GoalFragment
 import com.undef.fitapp.ui.createprofile.fragment.LoginDataFragment
 import com.undef.fitapp.ui.createprofile.fragment.MetadataFragment
+import kotlinx.android.synthetic.main.app_bar_home.*
 
 
 class CreateProfileActivity : AppCompatActivity() {
