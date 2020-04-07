@@ -17,25 +17,25 @@
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/gmaps_api_key"/>
 
         <activity
-            android:name=".CreateProfileActivity"
+            android:name=".ui.createprofile.CreateProfileActivity"
             android:label="@string/title_activity_create_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
 
-            android:name=".HomeActivity"
+            android:name=".ui.diary.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" >
+
+        </activity>
+        <activity android:name=".ui.diary.SearchMnEActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity android:name=".ui.createprofile.LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".ui.diary.SearchMnEActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".LoginActivity" >
-
         </activity>
         <activity android:name=".ui.diary.EditMealActivity" />
 

@@ -1,6 +1,6 @@
-package com.undef.fitapp.repositories
+package com.undef.fitapp.api.repositories
 
-import com.undef.fitapp.models.UserData
+import com.undef.fitapp.api.model.UserData
 
 object UserDataRepository {
     var preRegUserData = UserData(0,"","",0.0,"","","","",0.0, "")

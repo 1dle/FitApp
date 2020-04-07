@@ -1,10 +1,10 @@
-package com.undef.fitapp.models
+package com.undef.fitapp.api.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.undef.fitapp.R
-import com.undef.fitapp.repositories.UserDataRepository
-import com.undef.fitapp.ui.custom.ItemType
+import com.undef.fitapp.api.repositories.UserDataRepository
+import com.undef.fitapp.custom.ItemType
 import kotlinx.android.parcel.Parcelize
 
 abstract class FoodNMet{

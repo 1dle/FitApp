@@ -7,7 +7,8 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
-import com.undef.fitapp.models.UserData
+import com.undef.fitapp.api.model.UserData
+import com.undef.fitapp.ui.createprofile.CreateProfileActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

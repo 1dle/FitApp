@@ -1,4 +1,4 @@
-package com.undef.fitapp.models
+package com.undef.fitapp.api.model
 import com.google.gson.annotations.SerializedName
 
 

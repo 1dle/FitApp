@@ -1,4 +1,4 @@
-package com.undef.fitapp.ui.custom
+package com.undef.fitapp.custom
 
 
 enum class SearchMode {
