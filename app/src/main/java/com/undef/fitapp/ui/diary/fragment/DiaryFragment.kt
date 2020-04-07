@@ -16,11 +16,11 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.datePicker
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.undef.fitapp.R
+import com.undef.fitapp.api.repositories.toCalendar
 import com.undef.fitapp.custom.MEListAdapter
 import com.undef.fitapp.custom.SearchMode
 import com.undef.fitapp.ui.diary.SearchMnEActivity
 import com.undef.fitapp.ui.diary.viewmodel.DiaryViewModel
-import com.undef.fitapp.ui.diary.viewmodel.toCalendar
 import kotlinx.android.synthetic.main.fragment_diary.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

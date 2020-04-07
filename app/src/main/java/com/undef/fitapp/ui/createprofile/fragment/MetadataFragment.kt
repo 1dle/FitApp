@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.undef.fitapp.R
@@ -34,13 +35,20 @@ class MetadataFragment : Fragment() {
         val btnNext : Button = view.findViewById(R.id.btnMDNext)
 
         btnNext.setOnClickListener{
-            mViewPager.arrowScroll(View.FOCUS_RIGHT)
 
-            //TODO: Check inputs
             UserDataRepository.preRegUserData.male = spSex.selectedItem.toString().toLowerCase(Locale.ROOT)
             UserDataRepository.preRegUserData.birthDate = spBirthDate.selectedItem.toString()
-            UserDataRepository.preRegUserData.weight = etRegWeight.text.toString().toDouble()
-            UserDataRepository.preRegUserData.height = etRegHeight.text.toString().toDouble()
+
+            if(!etRegWeight.text.isNullOrEmpty() && !etRegWeight.text.isNullOrEmpty() && !etRegName.text.isNullOrEmpty()){
+                UserDataRepository.preRegUserData.name = etRegName.text.toString()
+                UserDataRepository.preRegUserData.weight = etRegWeight.text.toString().toDouble()
+                UserDataRepository.preRegUserData.height = etRegHeight.text.toString().toDouble()
+
+                mViewPager.arrowScroll(View.FOCUS_RIGHT)
+            }else{
+                Toast.makeText(context, getString(R.string.fill_all_input), Toast.LENGTH_SHORT).show()
+            }
+
 
         }
 

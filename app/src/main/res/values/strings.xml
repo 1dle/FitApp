@@ -47,8 +47,7 @@
     <string name="labelBirthDate">"Birth Date: "</string>
     <string name="labelWeightKg">Weight (kg)</string>
     <string name="labelHeightCm">Height (cm)</string>
-
-
+    <string name="fill_all_input">Fill all input fields!</string>
 
 
 </resources>

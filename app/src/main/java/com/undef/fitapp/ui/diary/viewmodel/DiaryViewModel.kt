@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.undef.fitapp.api.model.Daily
 import com.undef.fitapp.api.model.FoodNMet
+import com.undef.fitapp.api.repositories.MyCalendar
+import com.undef.fitapp.api.repositories.toCalendar
+import com.undef.fitapp.api.repositories.toDateTime
 import com.undef.fitapp.api.service.ConnectionData.service
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,20 +21,11 @@ import kotlin.collections.HashMap
 
 
 class DiaryViewModel : ViewModel() {
-    /* test
-    fun changeConsumedText() {
-        _consumedText.apply { value = "asd" }
-    }*/
 
     enum class DatePurpose{
         UI,
         SERVER
     }
-
-    private val calendar = Calendar.getInstance()
-    private val todaysDate = Calendar.getInstance().time
-
-
 
     suspend fun getDailyData(){
 
@@ -60,10 +54,7 @@ class DiaryViewModel : ViewModel() {
                         //order list by date (feltöltéskor nincs felvive a timestamp)
                         newList.apply{
                             sortBy {
-                                it.getDateOfAdd().let{
-                                    val parser =  SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                                    parser.parse(it)
-                                }
+                                it.getDateOfAdd()!!.toDateTime()
                             }
                         }
                         postValue(newList)
@@ -88,7 +79,7 @@ class DiaryViewModel : ViewModel() {
         value = mutableListOf<FoodNMet>()
     }
     private val _selectedDate = MutableLiveData<Date>().apply {
-        value = todaysDate
+        value = MyCalendar.today
     }
 
     val consumedText: LiveData<String> = _consumedText
@@ -98,27 +89,15 @@ class DiaryViewModel : ViewModel() {
     val selectedDate: LiveData<Date> = _selectedDate
 
     fun selectedDateAsString(purpose: DatePurpose = DatePurpose.UI): String{
-        val sdf = SimpleDateFormat("yyyy-MM-dd")
-        sdf.timeZone = TimeZone.getTimeZone("GMT")
-        if(_selectedDate.value == todaysDate && purpose == DatePurpose.UI){
+        if(_selectedDate.value == MyCalendar.today && purpose == DatePurpose.UI){
             return "Today"
         }else{
-            return sdf.format(_selectedDate.value)
+            return MyCalendar.dateToString(_selectedDate.value!!)
         }
 
     }
 
     fun incrementDate(increment: Int){
-        /*calendar.time = _selectedDate.value
-
-        if(increment == -1){
-            //previous day
-            calendar.add(Calendar.DATE, -1)
-        }else{
-            //next day
-            calendar.add(Calendar.DATE, 1)
-        }
-        setDate(calendar.time)*/
         setDate(_selectedDate.value!!.toCalendar()!!.let{
             it.add(Calendar.DATE, increment)
             it.time
@@ -133,9 +112,4 @@ class DiaryViewModel : ViewModel() {
         }
     }
 
-}
-fun Date.toCalendar(): Calendar? {
-    val cal = Calendar.getInstance()
-    cal.time = this
-    return cal
 }

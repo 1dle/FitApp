@@ -22,7 +22,7 @@ data class UserData(
     @SerializedName("Weight")
     var weight: Double,
     @SerializedName("Goal")
-    var goal: String
+    var goal: Int
 ) {
 
     override fun toString(): String {

@@ -16,6 +16,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.undef.fitapp.R
 import com.undef.fitapp.api.model.Food
+import com.undef.fitapp.api.repositories.MyCalendar
 import com.undef.fitapp.api.repositories.UserDataRepository
 import com.undef.fitapp.api.service.ConnectionData
 import com.undef.fitapp.custom.MEListAdapter
@@ -109,7 +110,7 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
                 //Toast.makeText(this, f.name, Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, EditMealActivity::class.java)
                 val bundle = Bundle()
-                bundle.putParcelable("selected_food",f as Food) //todo :: hiba
+                bundle.putParcelable("selected_food",f as Food)
                 intent.putExtra("myBundle",bundle)
                 intent.putExtra("add_date", addDate)
                 startActivity(intent)
@@ -133,7 +134,6 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        //todo: calculate burned calories -save into tvDialogExerciseBurnedKcals
                         //item.Duration * (item.MetNum * weight * 3.5) / 200.0
                         if(s.toString()!= ""){
                             val burnedKcals = (s.toString().toDouble() * exercise.metNum * UserDataRepository.loggedUser.weight * 3.5) / 200
@@ -143,14 +143,11 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
 
                     }
                 })
-                val sdf = SimpleDateFormat("HH:mm")
-                sdf.timeZone = TimeZone.getTimeZone("GMT");
-                dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).setText(sdf.format(Calendar.getInstance().time))
+                dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).setText(MyCalendar.getHourAndMinutes())
 
                 dialog.findViewById<TextView>(R.id.tvDialogExerciseDate).text = addDate
                 dialog.findViewById<TextView>(R.id.btnExerciseDialogAdd).setOnClickListener {
-                    //todo: check inputs aren't empty, and post to server
-                    if(tvBurned.text.toString()!="" && dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).text.toString()!=""){
+                    if(!dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).text.isNullOrEmpty() && !dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).text.isNullOrEmpty()){
                         /*{
                             "Person_ID": 1,
                             "Mets_ID": 1003,

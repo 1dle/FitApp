@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import com.undef.fitapp.R
 import com.undef.fitapp.api.model.Food
+import com.undef.fitapp.api.repositories.MyCalendar
 import com.undef.fitapp.api.repositories.UserDataRepository
 import com.undef.fitapp.api.service.ConnectionData
 import kotlinx.android.synthetic.main.activity_edit_meal.*
@@ -52,9 +53,7 @@ class EditMealActivity : AppCompatActivity() {
             }
         })
 
-        val sdf = SimpleDateFormat("HH:mm")
-        sdf.timeZone = TimeZone.getTimeZone("GMT");
-        etEditMealTimeStamp.setText(sdf.format(Calendar.getInstance().time))
+        etEditMealTimeStamp.setText(MyCalendar.getHourAndMinutes())
 
         btnEditMealSave.text = "Add meal"
 

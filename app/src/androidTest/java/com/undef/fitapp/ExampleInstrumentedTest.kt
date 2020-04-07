@@ -65,9 +65,9 @@ class ExampleInstrumentedTest {
 
         onView(withId(R.id.btnGDone)).perform(click())
 
-        val reg_test_user = UserData(REG_BIRTHYEAR, REG_EMAIL, REG_HEIGHT, "male", "", REG_PASSWORD, "", REG_WEIGHT,"stay")
+        //val reg_test_user = UserData(REG_BIRTHYEAR, REG_EMAIL, REG_HEIGHT, "male", "", REG_PASSWORD, "", REG_WEIGHT,"stay")
 
-        onView(withId(R.id.textView)).check(matches(withText(reg_test_user.toString())))
+        //onView(withId(R.id.textView)).check(matches(withText(reg_test_user.toString())))
 
     }
 }

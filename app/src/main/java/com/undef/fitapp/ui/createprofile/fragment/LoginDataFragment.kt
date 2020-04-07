@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.undef.fitapp.R
@@ -31,15 +32,14 @@ class LoginDataFragment : Fragment() {
         val btnNext : Button = view.findViewById(R.id.btnCLDNext)
 
         btnNext.setOnClickListener{
-            mViewPager.arrowScroll(View.FOCUS_RIGHT)
+            if(!etRegEmail.text.isNullOrEmpty() && !etRegPassword.text.isNullOrEmpty()){
+                UserDataRepository.preRegUserData.email = etRegEmail.text.toString()
+                UserDataRepository.preRegUserData.password = etRegPassword.text.toString()
 
-            //TODO: Warning if the next inputs are empty
-
-            //TODO: Check if empty, or incorrect
-            UserDataRepository.preRegUserData.email = etRegEmail.text.toString()
-
-            //TODO: Check if empty
-            UserDataRepository.preRegUserData.password = etRegPassword.text.toString()
+                mViewPager.arrowScroll(View.FOCUS_RIGHT)
+            }else{
+                Toast.makeText(context, getString(R.string.fill_all_input), Toast.LENGTH_SHORT).show()
+            }
 
 
         }

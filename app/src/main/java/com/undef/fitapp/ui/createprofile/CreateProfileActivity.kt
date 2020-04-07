@@ -8,7 +8,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.undef.fitapp.R
-import com.undef.fitapp.ui.main.SectionsPagerAdapter
 import com.undef.fitapp.ui.createprofile.fragment.GoalFragment
 import com.undef.fitapp.ui.createprofile.fragment.LoginDataFragment
 import com.undef.fitapp.ui.createprofile.fragment.MetadataFragment
