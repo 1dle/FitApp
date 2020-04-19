@@ -183,24 +183,39 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
                         //on click
                         if(diaryViewModel.foodNMet.value!!.get(position).type == ItemType.EXERCISE){
                             //ha exercise törlsé
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val resp = ConnectionData.service.deleteExercise((diaryViewModel.foodNMet.value!!.get(position) as Met).id).awaitResponse()
-                                if(resp.isSuccessful()){
-                                    diaryViewModel.getDailyData()
-                                }else{
-                                    TODO("Ha nem sikeres a törlés")
+                            MaterialDialog(context!!).show {
+                                title (text = "Delete exercise")
+                                message(text = "Delete \"${(diaryViewModel.foodNMet.value!!.get(position) as Met).detailed}\"\nAre you sure?")
+                                positiveButton(text = "Yes"){
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        val resp = ConnectionData.service.deleteExercise((diaryViewModel.foodNMet.value!!.get(position) as Met).id).awaitResponse()
+                                        if(resp.isSuccessful()){
+                                            diaryViewModel.getDailyData()
+                                        }else{
+                                            TODO("Ha nem sikeres a törlés")
+                                        }
+                                    }
                                 }
+                                negativeButton(text = "No") { dismiss() }
                             }
                         }else{
                             //ha meal törlés
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val resp = ConnectionData.service.deleteMeal((diaryViewModel.foodNMet.value!!.get(position) as Food).id).awaitResponse()
-                                if(resp.isSuccessful()){
-                                    diaryViewModel.getDailyData()
-                                }else{
-                                    TODO("Ha nem sikeres a törlés")
+                            MaterialDialog(context!!).show {
+                                title (text = "Delete meal")
+                                message(text = "Delete \"${(diaryViewModel.foodNMet.value!!.get(position) as Food).name}\"\nAre you sure?")
+                                positiveButton(text = "Yes"){
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        val resp = ConnectionData.service.deleteMeal((diaryViewModel.foodNMet.value!!.get(position) as Food).id).awaitResponse()
+                                        if(resp.isSuccessful()){
+                                            diaryViewModel.getDailyData()
+                                        }else{
+                                            TODO("Ha nem sikeres a törlés")
+                                        }
+                                    }
                                 }
+                                negativeButton(text = "No") { dismiss() }
                             }
+
                         }
 
                     }
