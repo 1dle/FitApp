@@ -1,12 +1,16 @@
 package com.undef.fitapp.ui.diary.fragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -15,14 +19,18 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.datetime.datePicker
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.undef.fitapp.R
 import com.undef.fitapp.api.model.Food
 import com.undef.fitapp.api.model.Met
+import com.undef.fitapp.api.repositories.MyCalendar
+import com.undef.fitapp.api.repositories.UserDataRepository
 import com.undef.fitapp.api.repositories.toCalendar
 import com.undef.fitapp.api.service.ConnectionData
+import com.undef.fitapp.api.service.ConnectionData.postExerciseToServer
 import com.undef.fitapp.custom.ItemType
 import com.undef.fitapp.custom.MEListAdapter
 import com.undef.fitapp.custom.SearchMode
@@ -143,6 +151,7 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
                 }*/
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onMEListItemClick(position: Int, view: View) {
         popupMenu {
             dropdownGravity = Gravity.RIGHT
@@ -156,6 +165,90 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
                         //on click
                         if(diaryViewModel.foodNMet.value!!.get(position).type == ItemType.EXERCISE){
                             //ha exerciseot akarok módosítani
+
+                            //COPIED FROM SEARCHMNEACTIVITY
+                            val exercise = diaryViewModel.foodNMet.value!!.get(position) as Met
+
+                            val dialog = MaterialDialog(context!!)
+                                .noAutoDismiss() //dialog doesn't disappear when touch outside of the dialog
+                                .customView(R.layout.dialog_edit_exercise)
+
+
+
+                            dialog.findViewById<TextView>(R.id.tvDialogExerciseTitle).text = "Edit exercise"
+                            dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).setText(exercise.duration.toString()) //previous amount
+
+                            val tvBurned = dialog.findViewById<TextView>(R.id.tvDialogExerciseBurnedKcals)
+                            tvBurned.setText("${(exercise.duration * exercise.metNum * UserDataRepository.loggedUser.weight * 3.5) / 200} kcals burned")//previous amount
+
+
+                            //set excersise.description
+                            dialog.findViewById<TextView>(R.id.tvDialogExerciseDescription).text = exercise.getTitle()
+
+                            dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).addTextChangedListener(object :
+                                TextWatcher {
+                                override fun afterTextChanged(s: Editable?) {}
+                                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                                    //item.Duration * (item.MetNum * weight * 3.5) / 200.0
+                                    if(s.toString()!= ""){
+                                        val burnedKcals = (s.toString().toDouble() * exercise.metNum * UserDataRepository.loggedUser.weight * 3.5) / 200
+                                        tvBurned.text = "${burnedKcals} kcals burned"
+                                    }
+
+
+                                }
+                            })
+                            dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).setText(MyCalendar.getHourAndMinutes())
+
+                            dialog.findViewById<TextView>(R.id.tvDialogExerciseDate).text = exercise.date!!.split("T")[0]
+                            dialog.findViewById<TextView>(R.id.btnExerciseDialogAdd).text = "Save exercise"
+
+
+                            dialog.findViewById<TextView>(R.id.btnExerciseDialogAdd).setOnClickListener {
+                                if(!dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).text.isNullOrEmpty() && !dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).text.isNullOrEmpty()){
+                                    CoroutineScope(Dispatchers.IO).launch{
+                                        //met_id megszerzése
+                                        val metId = getMetIdFormName(exercise.detailed)
+                                        if(metId != -1){
+                                            //ha megvan a metid
+
+                                            //elöző excercize törlése
+                                            val resp = ConnectionData.service.deleteExercise((diaryViewModel.foodNMet.value!!.get(position) as Met).id).awaitResponse()
+                                            if(resp.isSuccessful()){
+                                                val statusCode =
+                                                    postExerciseToServer(
+                                                        UserDataRepository.loggedUser.id,
+                                                        metId,
+                                                        exercise.date!!,
+                                                        dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).text.toString().toDouble())
+
+                                                if(statusCode == 1){
+                                                    //sikeres insert
+                                                    dialog.dismiss()
+                                                    diaryViewModel.getDailyData()
+                                                }else{
+                                                    TODO("sikertelen insert")
+                                                }
+                                                diaryViewModel.getDailyData()
+                                            }else{
+                                                TODO("Ha nem sikeres a törlés")
+                                            }
+
+                                        }else{
+                                            //nincs meg  amet id
+                                        }
+                                    }
+                                }
+                            }
+                            dialog.findViewById<TextView>(R.id.btnExerciseDialogCancel).setOnClickListener {
+                                dialog.dismiss()
+                            }
+                            dialog.show ()
+
+
+
                         }else{
                             //ha kaja módosítás
                             CoroutineScope(Dispatchers.IO).launch {
@@ -232,6 +325,17 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
             return call.body()!![0]
         }else{
             return null
+        }
+    }
+    private suspend fun getMetIdFormName(metName: String): Int{
+        val toPost = HashMap<String, Any>()
+        toPost["Top"] = 1;
+        toPost["Query"] = metName
+        val call = ConnectionData.service.searchExercise(toPost).awaitResponse()
+        if(call.isSuccessful && !call.body()!!.isNullOrEmpty()){
+            return call.body()!![0].id
+        }else{
+            return -1
         }
     }
 

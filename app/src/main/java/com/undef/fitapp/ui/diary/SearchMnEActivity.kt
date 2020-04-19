@@ -20,6 +20,7 @@ import com.undef.fitapp.api.model.Food
 import com.undef.fitapp.api.repositories.MyCalendar
 import com.undef.fitapp.api.repositories.UserDataRepository
 import com.undef.fitapp.api.service.ConnectionData
+import com.undef.fitapp.api.service.ConnectionData.postExerciseToServer
 import com.undef.fitapp.custom.MEListAdapter
 import com.undef.fitapp.custom.MEListAdapter.OnMEListItemClickListener
 import com.undef.fitapp.custom.SearchMode
@@ -189,22 +190,6 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
 
 
 
-    }
-
-    private suspend fun postExerciseToServer(personId: Int, metsId: Int, date: String, duration: Double): Int {
-
-        val valuesToPost = HashMap<String,Any>()
-        valuesToPost["Person_ID"] = personId
-        valuesToPost["Mets_ID"] = metsId
-        valuesToPost["Date"] = date
-        valuesToPost["Duration"] = duration
-
-        val call = ConnectionData.service.addExerciseToDiary(valuesToPost).awaitResponse()
-        if(call.isSuccessful && call.body()!=null){
-            return call.body()!!
-        }else{
-            return -1
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

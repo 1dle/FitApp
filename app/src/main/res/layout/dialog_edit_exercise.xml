@@ -50,7 +50,7 @@
 
     <TextView
         android:id="@+id/tvDialogExerciseBurnedKcals"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="0.0 kcals burned"
         android:textAlignment="center"
