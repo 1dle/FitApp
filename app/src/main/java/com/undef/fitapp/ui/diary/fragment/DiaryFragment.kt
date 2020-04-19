@@ -200,9 +200,12 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
 
                                 }
                             })
-                            dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).setText(MyCalendar.getHourAndMinutes())
+                            val dateAndTime = exercise.date!!.split("T")
+                            val times = dateAndTime[1].split(":")
+                            val old_time = times[0]+":"+times[1]
+                            dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).setText(old_time)
 
-                            dialog.findViewById<TextView>(R.id.tvDialogExerciseDate).text = exercise.date!!.split("T")[0]
+                            dialog.findViewById<TextView>(R.id.tvDialogExerciseDate).text = dateAndTime[0]
                             dialog.findViewById<TextView>(R.id.btnExerciseDialogAdd).text = "Save exercise"
 
 
