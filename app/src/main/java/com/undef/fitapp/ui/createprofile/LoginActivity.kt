@@ -43,21 +43,16 @@ class LoginActivity : AppCompatActivity() {
                     if(respond == null){
                         Toast.makeText(applicationContext, "Bad credentials :(", Toast.LENGTH_SHORT).show()
                     }else{
-                        Toast.makeText(applicationContext, "${UserDataRepository.loggedUser.name}", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(applicationContext, "${UserDataRepository.loggedUser.name}", Toast.LENGTH_SHORT).show()
                         val intent = Intent(applicationContext, HomeActivity::class.java)
                         startActivity(intent)
                     }
                 }
             }
         }
-
-
     }
     suspend fun loginUser(email: String, password: String): UserData?{
         val valuesToPost = HashMap<String, Any>()
-        /*{    "Password": "pasfdsdsadsadsad",
-            "Mail": "kdehsdfgabrecefghjni289@gmail.com"
-        }*/
         valuesToPost["Mail"] = email
         valuesToPost["Password"] = password
 

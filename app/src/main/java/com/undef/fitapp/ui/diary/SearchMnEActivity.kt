@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -103,7 +104,7 @@ class SearchMnEActivity() : AppCompatActivity(), OnMEListItemClickListener {
 
     }
 
-    override fun onMEListItemClick(position: Int) {
+    override fun onMEListItemClick(position: Int, view: View) {
         when(searchMode){
             SearchMode.MEAL -> if(viewModel.foodSearchResults.value!= null){
                 val f = viewModel.foodSearchResults.value!![position]

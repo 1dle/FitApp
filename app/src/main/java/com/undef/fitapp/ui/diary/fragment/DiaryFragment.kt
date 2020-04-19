@@ -1,8 +1,9 @@
 package com.undef.fitapp.ui.diary.fragment
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,17 +17,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.datePicker
 import com.getbase.floatingactionbutton.FloatingActionButton
+import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.undef.fitapp.R
-import com.undef.fitapp.api.repositories.UserDataRepository
+import com.undef.fitapp.api.model.Food
 import com.undef.fitapp.api.repositories.toCalendar
+import com.undef.fitapp.api.service.ConnectionData
+import com.undef.fitapp.custom.ItemType
 import com.undef.fitapp.custom.MEListAdapter
 import com.undef.fitapp.custom.SearchMode
+import com.undef.fitapp.ui.diary.EditMealActivity
 import com.undef.fitapp.ui.diary.SearchMnEActivity
 import com.undef.fitapp.ui.diary.viewmodel.DiaryViewModel
 import kotlinx.android.synthetic.main.fragment_diary.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.awaitResponse
 
 class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
 
@@ -57,6 +63,7 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
                 pit.first.text = it
             })
         }
+
 
         diaryViewModel.selectedDate.observe(viewLifecycleOwner, Observer {
             tvDiaryDate.text = diaryViewModel.selectedDateAsString()
@@ -135,9 +142,59 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
                 }*/
     }
 
-    override fun onMEListItemClick(position: Int) {
+    override fun onMEListItemClick(position: Int, view: View) {
+        popupMenu {
+            dropdownGravity = Gravity.RIGHT
+            dropDownHorizontalOffset = -10
+            dropDownVerticalOffset = 10
+            section {
+                item {
+                    label = "Modify"
+                    icon = R.drawable.ic_mode_edit
+                    callback = {
+                        //on click
+                        if(diaryViewModel.foodNMet.value!!.get(position).type == ItemType.EXERCISE){
+                            //ha exerciseot akarok módosítani
+                        }else{
+                            //ha kaja módosítás
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val f = foodToModifyData((diaryViewModel.foodNMet.value!!.get(position) as Food).name)
+                                if(f != null){
+                                    val intent = Intent(context, EditMealActivity::class.java)
+                                    val bundle = Bundle()
+                                    bundle.putParcelable("selected_food",f as Food)
+                                    intent.putExtra("myBundle",bundle)
+                                    intent.putExtra("add_date", (diaryViewModel.foodNMet.value!!.get(position) as Food).date)
+                                    intent.putExtra("old_amount", (diaryViewModel.foodNMet.value!!.get(position) as Food).quantity)
+                                    intent.putExtra("meal_id_delete", (diaryViewModel.foodNMet.value!!.get(position) as Food).id)
+                                    startActivity(intent)
+                                }
+                            }
 
+                        }
+                    }
+                }
+                item {
+                    label = "Delete"
+                    icon = R.drawable.ic_delete
+                    labelColor = Color.parseColor("#DD000A")
+                    callback = {
+                        //on click
+                    }
+                }
+            }
+        }.show(context!!,view)
     }
-
+    private suspend fun foodToModifyData(foodName: String): Food? {
+        val toPost = HashMap<String, Any>()
+        toPost["Top"] = 1;
+        toPost["Query"] = foodName
+        val call = ConnectionData.service.searchFood(toPost).awaitResponse()
+        if(call.isSuccessful && !call.body()!!.isNullOrEmpty()){
+            return call.body()!![0]
+        }else{
+            return null
+        }
+    }
 
 }

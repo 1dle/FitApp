@@ -86,7 +86,7 @@ class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode
         }
 
         holder.view.setOnClickListener {
-            holder.onMEListItemClickListener.onMEListItemClick(position)
+            holder.onMEListItemClickListener.onMEListItemClick(position, it)
         }
     }
 
@@ -94,7 +94,7 @@ class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode
     override fun getItemCount() = myDataset.size
 
     interface OnMEListItemClickListener{
-        fun onMEListItemClick(position: Int)
+        fun onMEListItemClick(position: Int, view: View)
     }
 
 }

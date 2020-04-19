@@ -1,16 +1,15 @@
 package com.undef.fitapp.api.service
 
 import com.undef.fitapp.api.model.*
+import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.Response
+import retrofit2.http.*
 
 interface FitAppServerApi {
-
-    /*
     //ip:port/api/Daily
     //@GET("Daily")
-    @GET("daily.json")
+   /* @GET("daily.json")
     fun getDaily(): Call<Daily>*/
     @POST("api/Daily")
     fun getDaily( @Body userIdAndDate: HashMap<String, Any>): Call<Daily>
@@ -32,4 +31,7 @@ interface FitAppServerApi {
 
     @POST("api/Person")
     fun registerUser(@Body userData: UserData): Call<Int>
+
+    @DELETE("api/Meal/{id}")
+    fun deleteMeal(@Path("id") id: Int): Call<ResponseBody> //responseBody = no deserialization
 }
