@@ -7,7 +7,7 @@ import com.undef.fitapp.api.repositories.UserDataRepository
 import com.undef.fitapp.custom.ItemType
 import kotlinx.android.parcel.Parcelize
 
-abstract class FoodNMet(open val id: Int){
+abstract class FoodNMet{
     abstract fun getTitle(): String
     abstract fun getKcals(): String
     abstract fun getIcon(): Int
@@ -30,7 +30,7 @@ data class Daily(
 @Parcelize
 data class Food(
     @SerializedName("ID")
-    override val id: Int,
+    val id: Int,
     @SerializedName("Calories")
     var calories: Double,
     @SerializedName("Carbs")
@@ -45,7 +45,7 @@ data class Food(
     var protein: Double,
     @SerializedName("Quantity")
     var quantity: Double
-): FoodNMet(id), Parcelable{
+): FoodNMet(), Parcelable{
     override fun getTitle() = name
 
     override fun getKcals() = calories.toString()
@@ -60,7 +60,7 @@ data class Food(
 
 data class Met(
     @SerializedName("ID")
-    override val id: Int,
+    val id: Int,
     @SerializedName("Date")
     var date: String?,
     @SerializedName("Detailed")
@@ -69,7 +69,7 @@ data class Met(
     var duration: Double,
     @SerializedName("MetNum", alternate = arrayOf<String>("MET"))
     var metNum: Double
-): FoodNMet(id) {
+): FoodNMet() {
     override fun getTitle() = detailed
 
     //min * (MET * kg * 3.5) / 200

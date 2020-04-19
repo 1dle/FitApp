@@ -20,6 +20,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.undef.fitapp.R
 import com.undef.fitapp.api.model.Food
+import com.undef.fitapp.api.model.Met
 import com.undef.fitapp.api.repositories.toCalendar
 import com.undef.fitapp.api.service.ConnectionData
 import com.undef.fitapp.custom.ItemType
@@ -180,6 +181,28 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
                     labelColor = Color.parseColor("#DD000A")
                     callback = {
                         //on click
+                        if(diaryViewModel.foodNMet.value!!.get(position).type == ItemType.EXERCISE){
+                            //ha exercise törlsé
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val resp = ConnectionData.service.deleteExercise((diaryViewModel.foodNMet.value!!.get(position) as Met).id).awaitResponse()
+                                if(resp.isSuccessful()){
+                                    diaryViewModel.getDailyData()
+                                }else{
+                                    TODO("Ha nem sikeres a törlés")
+                                }
+                            }
+                        }else{
+                            //ha meal törlés
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val resp = ConnectionData.service.deleteMeal((diaryViewModel.foodNMet.value!!.get(position) as Food).id).awaitResponse()
+                                if(resp.isSuccessful()){
+                                    diaryViewModel.getDailyData()
+                                }else{
+                                    TODO("Ha nem sikeres a törlés")
+                                }
+                            }
+                        }
+
                     }
                 }
             }

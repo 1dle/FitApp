@@ -28,18 +28,22 @@
         app:layout_constraintTop_toTopOf="@+id/ivResultItemType" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvResultItemKcals"
         app:layout_constraintStart_toEndOf="@+id/ivResultItemType"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tvResultItemTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="0"
+            android:singleLine="true"
             android:text="TextView" />
 
         <TextView

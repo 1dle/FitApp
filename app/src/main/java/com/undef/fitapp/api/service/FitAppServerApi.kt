@@ -34,4 +34,7 @@ interface FitAppServerApi {
 
     @DELETE("api/Meal/{id}")
     fun deleteMeal(@Path("id") id: Int): Call<ResponseBody> //responseBody = no deserialization
+
+    @DELETE("api/Exercise/{id}")
+    fun deleteExercise(@Path("id") id: Int): Call<ResponseBody>
 }
