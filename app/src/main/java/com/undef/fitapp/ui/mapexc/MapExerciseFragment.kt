@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -16,8 +18,12 @@ import com.undef.fitapp.R
 
 
 class MapExerciseFragment : Fragment() {
+
+    lateinit var viewModel : MapExerciseViewModel
+
     var mMapView: MapView? = null
     private var googleMap: GoogleMap? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,6 +34,9 @@ class MapExerciseFragment : Fragment() {
         mMapView =
             rootView.findViewById<View>(R.id.mapView) as MapView
         mMapView!!.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProviders.of(this).get(MapExerciseViewModel::class.java)
+
         mMapView!!.onResume() // needed to get the map to display immediately
         try {
             MapsInitializer.initialize(activity!!.applicationContext)
