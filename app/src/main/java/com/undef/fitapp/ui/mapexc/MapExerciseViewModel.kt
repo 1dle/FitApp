@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MapExerciseViewModel: ViewModel() {
-    private var currentLocation: MutableLiveData<Location> = MutableLiveData()
+    var currentLocation: MutableLiveData<Location> = MutableLiveData()
 
     //trace of current exercise
     private var trace =  MutableLiveData<MutableList<Location>>().apply {
@@ -14,5 +14,8 @@ class MapExerciseViewModel: ViewModel() {
 
     fun addLocToTrace(location: Location){
         trace.value!!.add(location)
+    }
+    fun updateLocation(location: Location?) {
+        currentLocation.value = location
     }
 }
