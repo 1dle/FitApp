@@ -62,13 +62,14 @@ class MapExerciseFragment : Fragment(){
 
         viewModel.currentLocation.observe(this, Observer {
             Log.d("CURRLOCATION", "lat: ${it.latitude} lng: ${it.longitude}")
-            drawCurrentLocation(it)
+            //drawCurrentLocation(it)
         })
         viewModel.trace.observe(this, Observer {
             //ha frissül a trace lista, új elem lett hozzáadva
             if(viewModel.myLocationProvider.status == TrackStatus.RUN){
-                Log.d("CURRLOCATION", "ujpoz")
+                //Log.d("CURRLOCATION", "ujpoz")
                 updateDrawedRoute(it)
+                rootView.findViewById<TextView>(R.id.tvTrackSpeed).setText("Speed:\n${viewModel.currentSpeed.value} m/s")
             }
 
         })
@@ -87,7 +88,7 @@ class MapExerciseFragment : Fragment(){
         mMapView!!.getMapAsync { mMap ->
             googleMap = mMap
             // For showing a move to my location button
-            googleMap!!.isMyLocationEnabled = false
+            googleMap!!.isMyLocationEnabled = true
 
 
             //last location

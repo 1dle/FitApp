@@ -14,8 +14,6 @@ import java.util.*
 import kotlin.concurrent.timer
 
 class MapExerciseViewModel(application: Application): AndroidViewModel(application) {
-
-
     /**
      * Location related stuff
      */
@@ -35,6 +33,7 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
                     if(prevLocation != null){
                         trace.value!!.add(location)
                         trace.notifyObserver()
+                        currentSpeed.value = location.speed.toInt()
                     }
                     prevLocation = currentLocation.value
 
@@ -48,6 +47,8 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
     var trace =  MutableLiveData<MutableList<Location>>().apply {
         value = mutableListOf<Location>()
     }
+    var currentSpeed = MutableLiveData<Int>().apply { value = 0 }
+
     /**
      * Timer related stuff
      */
