@@ -38,8 +38,6 @@ class MapExerciseFragment : Fragment(){
     var mMapView: MapView? = null
     private var googleMap: GoogleMap? = null
 
-    private lateinit var myLocationProvider: MyLocationProvider
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -62,13 +60,6 @@ class MapExerciseFragment : Fragment(){
             Log.d("CURRLOCATION", "lat: ${it.latitude} lng: ${it.longitude}")
         })
 
-        myLocationProvider = MyLocationProvider(context!!, object : MyLocationCallback(){
-            override fun newLocation(location: Location?) {
-                //trace listához hozzáadás persze ha fut
-                viewModel.currentLocation.value = location
-            }
-        })
-
 
         mMapView!!.onResume() // needed to get the map to display immediately
         try {
@@ -83,7 +74,7 @@ class MapExerciseFragment : Fragment(){
 
 
             //last location
-            myLocationProvider.getLastLocation().addOnSuccessListener { location : Location? ->
+            viewModel.myLocationProvider.getLastLocation().addOnSuccessListener { location : Location? ->
                 if(location!=null){
                     val cameraPosition =
                         CameraPosition.Builder().target(
@@ -91,22 +82,21 @@ class MapExerciseFragment : Fragment(){
                         ).zoom(12f).build()
                     googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
                 }
-
             }
         }
 
         val btnTrackStartStop = rootView.findViewById<Button>(R.id.btnTrackStartStop).apply{
             setOnClickListener {
 
-                if(myLocationProvider.status == TrackStatus.STOP){
+                if(viewModel.myLocationProvider.status == TrackStatus.STOP){
                     //ha nincs még trackelve a cucc
 
-                    myLocationProvider.startLocationUpdates()
+                    viewModel.myLocationProvider.startLocationUpdates()
 
                     Log.d(MapExerciseFragment::class.java.name, "start")
                     btnTrackStartStop.setText("Stop")
-                }else if(myLocationProvider.status == TrackStatus.RUN){
-                    myLocationProvider.stopLocationUpdates()
+                }else if(viewModel.myLocationProvider.status == TrackStatus.RUN){
+                    viewModel.myLocationProvider.stopLocationUpdates()
                     Log.d(MapExerciseFragment::class.java.name, "stop")
                     btnTrackStartStop.setText("Start")
                 }
