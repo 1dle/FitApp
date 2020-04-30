@@ -59,6 +59,10 @@ class MapExerciseFragment : Fragment(){
         viewModel.currentLocation.observe(this, Observer {
             Log.d("CURRLOCATION", "lat: ${it.latitude} lng: ${it.longitude}")
         })
+        viewModel.trace.observe(this, Observer {
+            //ha frissül a trace lista, új elem lett hozzáadva
+        })
+
 
 
         mMapView!!.onResume() // needed to get the map to display immediately
