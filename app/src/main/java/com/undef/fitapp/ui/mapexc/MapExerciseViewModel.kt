@@ -6,12 +6,20 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.concurrent.timer
 
 class MapExerciseViewModel(application: Application): AndroidViewModel(application) {
 
-    var myLocationProvider =
 
-        MyLocationProvider(application.applicationContext, object : MyLocationCallback(){
+    /**
+     * Location related stuff
+     */
+    var myLocationProvider = MyLocationProvider(application.applicationContext, object : MyLocationCallback(){
 
             var prevLocation : Location? = null
 
@@ -36,10 +44,33 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
             }
         })
     var currentLocation: MutableLiveData<Location> = MutableLiveData()
-
     //trace of current exercise
     var trace =  MutableLiveData<MutableList<Location>>().apply {
         value = mutableListOf<Location>()
+    }
+    /**
+     * Timer related stuff
+     */
+    val elapsedSeconds = MutableLiveData<Int>().apply { value = 0 }
+    val elapsedTime: String
+        get() = String.format(
+            "%02d:%02d:%02d",
+            elapsedSeconds.value!! / 3600,
+            (elapsedSeconds.value!! % 3600) / 60,
+            elapsedSeconds.value!! % 60
+        );
+    private var _timer: Timer? = null
+    fun startTimer(){
+        _timer = kotlin.concurrent.timer(period = 1000){
+
+            CoroutineScope(Dispatchers.Main).launch {
+                elapsedSeconds.value = elapsedSeconds.value!!+1}
+            }
+
+    }
+    fun stopTimer(){
+        _timer?.cancel()
+        elapsedSeconds.setValue(0)
     }
 
 }

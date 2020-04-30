@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextClock
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -18,6 +20,12 @@ import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.*
 import com.undef.fitapp.R
 import kotlinx.android.synthetic.main.fragment_mapexercise.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.concurrent.timer
 
 
 class MapExerciseFragment : Fragment(){
@@ -33,11 +41,6 @@ class MapExerciseFragment : Fragment(){
 
     private lateinit var userRoutePolyline: Polyline
     private var _userRoutePolylineInitialized = false
-
-
-
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +71,9 @@ class MapExerciseFragment : Fragment(){
                 updateDrawedRoute(it)
             }
 
+        })
+        viewModel.elapsedSeconds.observe(this, Observer {
+            rootView.findViewById<TextView>(R.id.tvTrackTimer).setText(viewModel.elapsedTime)
         })
 
 
@@ -104,10 +110,15 @@ class MapExerciseFragment : Fragment(){
 
                     Log.d(MapExerciseFragment::class.java.name, "start")
                     btnTrackStartStop.setText("Stop")
+                    viewModel.startTimer()
+
+
                 }else if(viewModel.myLocationProvider.status == TrackStatus.RUN){
                     viewModel.myLocationProvider.stopLocationUpdates()
                     Log.d(MapExerciseFragment::class.java.name, "stop")
                     btnTrackStartStop.setText("Start")
+
+                    viewModel.stopTimer()
                 }
             }
         }
@@ -142,7 +153,9 @@ class MapExerciseFragment : Fragment(){
 
         val circleOptions: CircleOptions = CircleOptions()
             .center(LatLng(location.latitude, location.longitude))
-            .radius(100.0) // In meters
+            .radius(200.0) // In meters
+            .strokeWidth(3.0f)
+            .fillColor(Color.CYAN)
         userPostionCircle = googleMap!!.addCircle(circleOptions)
 
         moveMapCam(
