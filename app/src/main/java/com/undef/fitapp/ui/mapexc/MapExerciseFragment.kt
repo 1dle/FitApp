@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -28,24 +29,44 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.undef.fitapp.R
+import kotlinx.android.synthetic.main.fragment_mapexercise.*
 
-class MapExerciseFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+class MapExerciseFragment : Fragment(){
 
     lateinit var viewModel : MapExerciseViewModel
 
     var mMapView: MapView? = null
     private var googleMap: GoogleMap? = null
 
+    private var status = MapExerciseViewModel.TrackStatus.STOP
+
     //location updates
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-    private var googleApiClient: GoogleApiClient? = null
-    private var locationRequest: LocationRequest? = null
+    private lateinit var locationRequest: LocationRequest
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        connectToGoogleApiClient()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
+
+        locationRequest = LocationRequest.create().apply {
+            interval = 1000 //1 sec
+            fastestInterval = 5000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        locationCallback = object : LocationCallback(){
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                locationResult?.lastLocation?.let {
+                    //Log.e("changed the location", "values" + it.longitude + " " + it.latitude)
+                    it.let { it -> viewModel.updateLocation(it) }
+                }
+            }
+        }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,16 +85,6 @@ class MapExerciseFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goo
             Log.d("CURRLOCATION", "lat: ${it.latitude} lng: ${it.longitude}")
         })
 
-        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!);
-
-        /*locationCallback = object : LocationCallback(){
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                for(location in locationResult.locations){
-                    //todo
-                }
-            }
-        }*/
 
         mMapView!!.onResume() // needed to get the map to display immediately
         try {
@@ -93,79 +104,57 @@ class MapExerciseFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goo
                 CameraPosition.Builder().target(sydney).zoom(12f).build()
             googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
         }
+
+        val btnTrackStartStop = rootView.findViewById<Button>(R.id.btnTrackStartStop).apply{
+            setOnClickListener {
+
+                if(status == MapExerciseViewModel.TrackStatus.STOP){
+                    startTracking()
+                    Log.d(MapExerciseFragment::class.java.name, "start")
+                    btnTrackStartStop.setText("Stop")
+                }else if(status == MapExerciseViewModel.TrackStatus.RUN){
+                    stopTracking()
+                    Log.d(MapExerciseFragment::class.java.name, "stop")
+                    btnTrackStartStop.setText("Start")
+                }
+            }
+        }
+
+
         return rootView
     }
-    private fun connectToGoogleApiClient() {
-        googleApiClient = activity?.let {
-            GoogleApiClient.Builder(it)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build()
-        }
-        locationRequest = LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setInterval(1000)
-            .setFastestInterval(1000)
+
+    fun stopTracking(){
+        status = MapExerciseViewModel.TrackStatus.STOP
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
+    fun startTracking(){
+        status = MapExerciseViewModel.TrackStatus.RUN
 
-    override fun onConnectionFailed(p0: ConnectionResult) {
-        Log.d("CURRLOCATION", "onConnectionFailed")
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+
     }
-
-    override fun onConnected(bundle: Bundle?) {
-        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) && Build.VERSION.SDK_INT >= 23) {
-            val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
-            ActivityCompat.requestPermissions(activity!!, permissions, 1000)
-        } else {
-            val location = LocationServices.getFusedLocationProviderClient(activity!!)
-            location.requestLocationUpdates(locationRequest,object : LocationCallback() {
-                override fun onLocationAvailability(p0: LocationAvailability?) {
-
-                }
-                override fun onLocationResult(p0: LocationResult?) {
-                    p0?.lastLocation?.let {
-                        Log.e("changed the location", "values" + it.longitude + " " + it.latitude)
-                        it.let { it -> viewModel.updateLocation(it) }
-                    }
-                }
-
-            },null)
-            location.lastLocation.addOnSuccessListener {
-
+    /*
+        fusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
+            if(location!=null){
+                Log.d(MapExerciseFragment::class.java.name, "last known location: Lat:${location.latitude} Lng:${location.longitude}")
             }
-        }
-    }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            1000 -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    connectToGoogleApiClient()
-                } else {
-                    Toast.makeText(activity, "Cannot get Location Updates", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
-    }
-
-    override fun onConnectionSuspended(p0: Int) {
-    }
+    */
 
 
     override fun onResume() {
         super.onResume()
-        googleApiClient?.connect()
+        //googleApiClient?.connect()
         mMapView!!.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        googleApiClient?.isConnected?.let { if (it) googleApiClient?.disconnect() }
+        //googleApiClient?.isConnected?.let { if (it) googleApiClient?.disconnect() }
         mMapView!!.onPause()
     }
-
     override fun onDestroy() {
         super.onDestroy()
         mMapView!!.onDestroy()
@@ -174,14 +163,6 @@ class MapExerciseFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, Goo
     override fun onLowMemory() {
         super.onLowMemory()
         mMapView!!.onLowMemory()
-    }
-
-    private fun hasPermission(permission: String): Boolean {
-        return ContextCompat.checkSelfPermission(activity!!, permission) == PackageManager.PERMISSION_GRANTED
-    }
-
-    override fun onLocationChanged(p0: Location?) {
-        p0?.let { viewModel.updateLocation(p0) }
     }
 
 }

@@ -5,6 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MapExerciseViewModel: ViewModel() {
+
+    enum class TrackStatus{
+        RUN,
+        STOP
+    }
+
+
     var currentLocation: MutableLiveData<Location> = MutableLiveData()
 
     //trace of current exercise
