@@ -95,14 +95,20 @@ class MapExerciseFragment : Fragment(){
         mMapView!!.getMapAsync { mMap ->
             googleMap = mMap
             // For showing a move to my location button
-            googleMap!!.isMyLocationEnabled = true
-            // For dropping a marker at a point on the Map
-            val sydney = LatLng(-34.0, 151.0)
-            googleMap!!.addMarker(MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"))
-            // For zooming automatically to the location of the marker
-            val cameraPosition =
-                CameraPosition.Builder().target(sydney).zoom(12f).build()
-            googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            googleMap!!.isMyLocationEnabled = false
+
+
+            //last location
+            fusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
+                if(location!=null){
+                    val cameraPosition =
+                        CameraPosition.Builder().target(
+                            LatLng(location.latitude, location.longitude)
+                        ).zoom(12f).build()
+                    googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+                }
+
+            }
         }
 
         val btnTrackStartStop = rootView.findViewById<Button>(R.id.btnTrackStartStop).apply{
@@ -130,29 +136,22 @@ class MapExerciseFragment : Fragment(){
     }
     fun startTracking(){
         status = MapExerciseViewModel.TrackStatus.RUN
-
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
 
     }
-    /*
-        fusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
-            if(location!=null){
-                Log.d(MapExerciseFragment::class.java.name, "last known location: Lat:${location.latitude} Lng:${location.longitude}")
-            }
 
-        }
-    */
 
 
     override fun onResume() {
         super.onResume()
-        //googleApiClient?.connect()
+        if (status == MapExerciseViewModel.TrackStatus.RUN) fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
         mMapView!!.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        //googleApiClient?.isConnected?.let { if (it) googleApiClient?.disconnect() }
+        //pause location updates
+        fusedLocationClient.removeLocationUpdates(locationCallback)
         mMapView!!.onPause()
     }
     override fun onDestroy() {
