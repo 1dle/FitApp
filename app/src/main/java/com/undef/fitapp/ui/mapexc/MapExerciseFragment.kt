@@ -1,35 +1,24 @@
 package com.undef.fitapp.ui.mapexc
 
-import android.Manifest
-import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
-import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.MapsInitializer
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.undef.fitapp.R
 import kotlinx.android.synthetic.main.fragment_mapexercise.*
+
 
 class MapExerciseFragment : Fragment(){
 
@@ -37,6 +26,18 @@ class MapExerciseFragment : Fragment(){
 
     var mMapView: MapView? = null
     private var googleMap: GoogleMap? = null
+
+    //map drawing stuffs
+    private lateinit var userPostionCircle: Circle
+    private var _userPosCircleInitialized = false
+
+    private lateinit var userRoutePolyline: Polyline
+    private var _userRoutePolylineInitialized = false
+
+
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,9 +59,15 @@ class MapExerciseFragment : Fragment(){
 
         viewModel.currentLocation.observe(this, Observer {
             Log.d("CURRLOCATION", "lat: ${it.latitude} lng: ${it.longitude}")
+            drawCurrentLocation(it)
         })
         viewModel.trace.observe(this, Observer {
             //ha frissül a trace lista, új elem lett hozzáadva
+            if(viewModel.myLocationProvider.status == TrackStatus.RUN){
+                Log.d("CURRLOCATION", "ujpoz")
+                updateDrawedRoute(it)
+            }
+
         })
 
 
@@ -80,11 +87,9 @@ class MapExerciseFragment : Fragment(){
             //last location
             viewModel.myLocationProvider.getLastLocation().addOnSuccessListener { location : Location? ->
                 if(location!=null){
-                    val cameraPosition =
-                        CameraPosition.Builder().target(
-                            LatLng(location.latitude, location.longitude)
-                        ).zoom(12f).build()
-                    googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+                    moveMapCam(
+                        LatLng(location.latitude, location.longitude)
+                    )
                 }
             }
         }
@@ -110,6 +115,48 @@ class MapExerciseFragment : Fragment(){
 
         return rootView
 
+    }
+    fun updateDrawedRoute(locations: List<Location>){
+        if(_userRoutePolylineInitialized){
+            userRoutePolyline.remove()
+        }
+
+        val route = PolylineOptions()
+        locations.forEach {
+            route.add(LatLng(it.latitude, it.longitude))
+        }
+
+        userRoutePolyline = googleMap!!.addPolyline(route.color(Color.BLUE))
+
+        _userRoutePolylineInitialized = true
+
+
+    }
+
+    fun drawCurrentLocation(location: Location){
+
+        if(_userPosCircleInitialized){
+            //levesszük az előzőt a mapről
+            userPostionCircle.remove()
+        }
+
+        val circleOptions: CircleOptions = CircleOptions()
+            .center(LatLng(location.latitude, location.longitude))
+            .radius(100.0) // In meters
+        userPostionCircle = googleMap!!.addCircle(circleOptions)
+
+        moveMapCam(
+            LatLng(userPostionCircle.center.latitude, userPostionCircle.center.longitude)
+        )
+        _userPosCircleInitialized = true
+    }
+
+    fun moveMapCam(latlng: LatLng){
+        val cameraPosition =
+            CameraPosition.Builder().target(
+                latlng
+            ).zoom(12f).build()
+        googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
 
