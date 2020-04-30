@@ -38,33 +38,10 @@ class MapExerciseFragment : Fragment(){
     var mMapView: MapView? = null
     private var googleMap: GoogleMap? = null
 
-    private var status = MapExerciseViewModel.TrackStatus.STOP
-
-    //location updates
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
-    private lateinit var locationRequest: LocationRequest
-
+    private lateinit var myLocationProvider: MyLocationProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
-
-        locationRequest = LocationRequest.create().apply {
-            interval = 1000 //1 sec
-            fastestInterval = 5000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-
-        locationCallback = object : LocationCallback(){
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                locationResult?.lastLocation?.let {
-                    //Log.e("changed the location", "values" + it.longitude + " " + it.latitude)
-                    it.let { it -> viewModel.updateLocation(it) }
-                }
-            }
-        }
     }
 
 
@@ -85,6 +62,13 @@ class MapExerciseFragment : Fragment(){
             Log.d("CURRLOCATION", "lat: ${it.latitude} lng: ${it.longitude}")
         })
 
+        myLocationProvider = MyLocationProvider(context!!, object : MyLocationCallback(){
+            override fun newLocation(location: Location?) {
+                //trace listához hozzáadás persze ha fut
+                viewModel.currentLocation.value = location
+            }
+        })
+
 
         mMapView!!.onResume() // needed to get the map to display immediately
         try {
@@ -99,7 +83,7 @@ class MapExerciseFragment : Fragment(){
 
 
             //last location
-            fusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
+            myLocationProvider.getLastLocation().addOnSuccessListener { location : Location? ->
                 if(location!=null){
                     val cameraPosition =
                         CameraPosition.Builder().target(
@@ -114,12 +98,15 @@ class MapExerciseFragment : Fragment(){
         val btnTrackStartStop = rootView.findViewById<Button>(R.id.btnTrackStartStop).apply{
             setOnClickListener {
 
-                if(status == MapExerciseViewModel.TrackStatus.STOP){
-                    startTracking()
+                if(myLocationProvider.status == TrackStatus.STOP){
+                    //ha nincs még trackelve a cucc
+
+                    myLocationProvider.startLocationUpdates()
+
                     Log.d(MapExerciseFragment::class.java.name, "start")
                     btnTrackStartStop.setText("Stop")
-                }else if(status == MapExerciseViewModel.TrackStatus.RUN){
-                    stopTracking()
+                }else if(myLocationProvider.status == TrackStatus.RUN){
+                    myLocationProvider.stopLocationUpdates()
                     Log.d(MapExerciseFragment::class.java.name, "stop")
                     btnTrackStartStop.setText("Start")
                 }
@@ -128,15 +115,6 @@ class MapExerciseFragment : Fragment(){
 
 
         return rootView
-    }
-
-    fun stopTracking(){
-        status = MapExerciseViewModel.TrackStatus.STOP
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
-    fun startTracking(){
-        status = MapExerciseViewModel.TrackStatus.RUN
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
 
     }
 
@@ -144,14 +122,11 @@ class MapExerciseFragment : Fragment(){
 
     override fun onResume() {
         super.onResume()
-        if (status == MapExerciseViewModel.TrackStatus.RUN) fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
         mMapView!!.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        //pause location updates
-        fusedLocationClient.removeLocationUpdates(locationCallback)
         mMapView!!.onPause()
     }
     override fun onDestroy() {
