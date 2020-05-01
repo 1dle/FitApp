@@ -9,18 +9,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Task
 import android.location.Location as Location
 
-enum class TrackStatus{
-    RUN,
-    STOP
-}
 class MyLocationProvider(val context: Context, private val locationCallback: MyLocationCallback){
 
     private val fusedLocationClient: FusedLocationProviderClient
     private val locationRequest: LocationRequest
-
-    var status = TrackStatus.STOP
-
-
 
     init{
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
@@ -33,11 +25,9 @@ class MyLocationProvider(val context: Context, private val locationCallback: MyL
 
     fun startLocationUpdates(){
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-        status = TrackStatus.RUN
     }
     fun stopLocationUpdates(){
         fusedLocationClient.removeLocationUpdates(locationCallback)
-        status = TrackStatus.STOP
     }
 
     fun getLastLocation() : Task<Location?> {

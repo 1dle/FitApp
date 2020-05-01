@@ -11,7 +11,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
+enum class TrackStatus{
+    RUN,
+    STOP
+}
 class MapExerciseViewModel(application: Application): AndroidViewModel(application) {
+
+    var trackStatus = MutableLiveData<TrackStatus>().apply {
+        value = TrackStatus.STOP
+    }
     /**
      * Location related stuff
      */
@@ -32,7 +40,10 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
                         trace.value!!.add(location) //útvonalhoz hozzáadás
                         trace.notifyObserver() //observerek értesítése
 
+
                         currentSpeed.value = location.speed.toInt() //speed frissítése
+                        allSpeeds.add(location.speed.toInt())
+
 
                         //távolság számolása
                         _distanceInKms.value = _distanceInKms.value!! + getDistanceFromLatLonInKm(LatLng(
@@ -50,12 +61,18 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
     var trace =  MutableLiveData<MutableList<Location>>().apply {
         value = mutableListOf<Location>()
     }
+
+    private val allSpeeds = mutableListOf<Int>()
     var currentSpeed = MutableLiveData<Int>().apply { value = 0 }
+
+    val avgSpeed: String
+        get() = String.format("%.2f", allSpeeds.sum().toDouble() / allSpeeds.size.toDouble())
 
     /**
      * Activity related stuff
      */
     var selectedActivityType = ActivityCalculator.ActivityType.NONE
+    var currentBurned = 0.0
 
 
     /**
@@ -83,6 +100,7 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
     /**
      * Timer related stuff
      */
+    var prevExerciseLengthInSeconds = 0;
     val elapsedSeconds = MutableLiveData<Int>().apply { value = 0 }
     val elapsedTime: String
         get() = String.format(
@@ -91,6 +109,10 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
             (elapsedSeconds.value!! % 3600) / 60,
             elapsedSeconds.value!! % 60
         );
+
+    val durationInMinutes: Double
+        get() = prevExerciseLengthInSeconds.toDouble() / 60
+
     private var _timer: Timer? = null
     fun startTimer(){
         _timer = kotlin.concurrent.timer(period = 1000){
@@ -102,6 +124,7 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
     }
     fun stopTimer(){
         _timer?.cancel()
+        prevExerciseLengthInSeconds = elapsedSeconds.value!!
         elapsedSeconds.setValue(0)
     }
 
