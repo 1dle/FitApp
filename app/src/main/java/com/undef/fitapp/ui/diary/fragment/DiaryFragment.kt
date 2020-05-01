@@ -26,7 +26,6 @@ import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.undef.fitapp.R
 import com.undef.fitapp.api.model.Food
 import com.undef.fitapp.api.model.Met
-import com.undef.fitapp.api.repositories.MyCalendar
 import com.undef.fitapp.api.repositories.UserDataRepository
 import com.undef.fitapp.api.repositories.toCalendar
 import com.undef.fitapp.api.service.ConnectionData
