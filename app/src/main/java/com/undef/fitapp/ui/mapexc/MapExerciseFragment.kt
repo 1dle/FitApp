@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextClock
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -18,14 +17,10 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.*
+import com.google.android.material.snackbar.Snackbar
+import com.jaredrummler.materialspinner.MaterialSpinner
 import com.undef.fitapp.R
 import kotlinx.android.synthetic.main.fragment_mapexercise.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.concurrent.timer
 
 
 class MapExerciseFragment : Fragment(){
@@ -58,6 +53,8 @@ class MapExerciseFragment : Fragment(){
             rootView.findViewById<View>(R.id.mapView) as MapView
         mMapView!!.onCreate(savedInstanceState)
 
+        initActivitySpinner(rootView.findViewById(R.id.spTrackActivityChooser) as MaterialSpinner)
+
         viewModel = ViewModelProviders.of(this).get(MapExerciseViewModel::class.java)
 
         viewModel.currentLocation.observe(this, Observer {
@@ -69,7 +66,13 @@ class MapExerciseFragment : Fragment(){
             if(viewModel.myLocationProvider.status == TrackStatus.RUN){
                 //Log.d("CURRLOCATION", "ujpoz")
                 updateDrawedRoute(it)
-                rootView.findViewById<TextView>(R.id.tvTrackSpeed).setText("Speed:\n${viewModel.currentSpeed.value} m/s")
+
+                //set speed text
+                rootView.findViewById<TextView>(R.id.tvTrackSpeed).text = "Speed:\n${viewModel.currentSpeed.value} m/s"
+
+                //set distance text
+                rootView.findViewById<TextView>(R.id.tvTrackDistance).text = "Distance:\n${viewModel.distanceTraveled} km"
+
             }
 
         })
@@ -128,6 +131,23 @@ class MapExerciseFragment : Fragment(){
         return rootView
 
     }
+    fun initActivitySpinner(spinner : MaterialSpinner){
+
+        spinner.setItems(
+            "Walk","Run","Cycling"
+        )
+        spinner.setOnItemSelectedListener { view, position, id, item ->
+            viewModel.selectedActivityType = when(id){
+                0L -> ActivityCalculator.ActivityType.WALK
+                1L -> ActivityCalculator.ActivityType.RUN
+                2L -> ActivityCalculator.ActivityType.CYCLING
+                else -> ActivityCalculator.ActivityType.NONE
+            }
+            //Snackbar.make(view, viewModel.selectedActivityType.name, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+
     fun updateDrawedRoute(locations: List<Location>){
         if(_userRoutePolylineInitialized){
             userRoutePolyline.remove()

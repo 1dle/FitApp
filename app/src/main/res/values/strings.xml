@@ -49,5 +49,7 @@
     <string name="labelHeightCm">Height (cm)</string>
     <string name="fill_all_input">Fill all input fields!</string>
 
+    <string name="select_activity_type">Select activity type</string>
+
 
 </resources>

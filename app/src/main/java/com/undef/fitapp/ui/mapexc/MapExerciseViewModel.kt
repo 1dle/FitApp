@@ -2,16 +2,14 @@ package com.undef.fitapp.ui.mapexc
 
 import android.app.Application
 import android.location.Location
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.concurrent.timer
 
 class MapExerciseViewModel(application: Application): AndroidViewModel(application) {
     /**
@@ -31,9 +29,14 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
 
                     //ne rajzoljon egy vonalat amikor a kezdő helyre ugrik
                     if(prevLocation != null){
-                        trace.value!!.add(location)
-                        trace.notifyObserver()
-                        currentSpeed.value = location.speed.toInt()
+                        trace.value!!.add(location) //útvonalhoz hozzáadás
+                        trace.notifyObserver() //observerek értesítése
+
+                        currentSpeed.value = location.speed.toInt() //speed frissítése
+
+                        //távolság számolása
+                        _distanceInKms.value = _distanceInKms.value!! + getDistanceFromLatLonInKm(LatLng(
+                            prevLocation!!.latitude, prevLocation!!.longitude), LatLng(location.latitude, location.longitude))
                     }
                     prevLocation = currentLocation.value
 
@@ -48,6 +51,34 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
         value = mutableListOf<Location>()
     }
     var currentSpeed = MutableLiveData<Int>().apply { value = 0 }
+
+    /**
+     * Activity related stuff
+     */
+    var selectedActivityType = ActivityCalculator.ActivityType.NONE
+
+
+    /**
+     * Distance measuring
+     */
+    private val _distanceInKms = MutableLiveData<Double>().apply { value = 0.0 }
+    val distanceTraveled: String
+        get() = String.format("%.2f",_distanceInKms.value)
+
+    fun getDistanceFromLatLonInKm(latlng1: LatLng, latlng2: LatLng) : Double {
+        val r = 6371; // Radius of the earth in km
+        val dLat = deg2rad(latlng2.latitude-latlng1.latitude);  // deg2rad below
+        val dLon = deg2rad(latlng2.longitude-latlng2.longitude);
+        val a =
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(deg2rad(latlng1.latitude)) * Math.cos(deg2rad(latlng2.latitude)) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2)
+        ;
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        val d = r * c; // Distance in km
+        return d;
+    }
+    fun deg2rad(deg: Double) = deg * (Math.PI/180)
 
     /**
      * Timer related stuff
