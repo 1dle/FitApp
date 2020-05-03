@@ -22,6 +22,8 @@ object MyCalendar {
     fun dateToString(date: Date)= sdfDate.format(date)
 
     fun getCurrentDate() = calendar.time
+
+    fun dateTimeToString(dateTime:Date) = sdfDateTime.format(dateTime)
 }
 //for sorting
 @SuppressLint("SimpleDateFormat")

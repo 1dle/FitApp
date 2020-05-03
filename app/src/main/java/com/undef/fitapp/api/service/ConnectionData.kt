@@ -1,5 +1,6 @@
 package com.undef.fitapp.api.service
 
+import com.undef.fitapp.api.model.GpsExercise
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory

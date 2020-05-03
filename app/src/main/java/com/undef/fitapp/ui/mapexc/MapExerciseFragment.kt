@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextClock
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -23,9 +24,21 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.jaredrummler.materialspinner.MaterialSpinner
 import com.undef.fitapp.R
+import com.undef.fitapp.api.model.GpsExercise
+import com.undef.fitapp.api.model.Path
+import com.undef.fitapp.api.repositories.MyCalendar
 import com.undef.fitapp.api.repositories.UserDataRepository
+import com.undef.fitapp.api.service.ConnectionData
 import kotlinx.android.synthetic.main.fragment_mapexercise.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ActorScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.awaitResponse
 import java.util.*
 
 class MapExerciseFragment : Fragment(){
@@ -123,6 +136,8 @@ class MapExerciseFragment : Fragment(){
                     btnTrackStartStop.setText("Stop")
                     viewModel.startTimer()
 
+                    viewModel.startTime = MyCalendar.getCurrentDate()
+
 
 
 
@@ -183,8 +198,38 @@ class MapExerciseFragment : Fragment(){
             findViewById<TextView>(R.id.btnERaddtoDiary).setOnClickListener {
                 //küldés a szerverre
 
+                //ha véletlen nem lett beállítva itt orvosoljuk
+                if(viewModel.startTime == null){
+                    viewModel.startTime = MyCalendar.getCurrentDate()
+                }
+                val path = mutableListOf<Path>()
 
+                viewModel.trace.value!!.forEach {
+                    path.add(Path(it.latitude, it.longitude))
+                }
+                val toPost = GpsExercise(
+                    UserDataRepository.loggedUser.id,
+                    viewModel.selectedActivityType.name.toLowerCase(Locale.ROOT),
+                    MyCalendar.dateTimeToString(viewModel.startTime!!),
+                    viewModel.durationInMinutes,
+                    viewModel.avgSpeed.toDouble(),
+                    viewModel.currentBurned,
+                    path
+                )
+                CoroutineScope(Dispatchers.IO).launch {
+                    val call = ConnectionData.service.postGpsExercise(toPost).awaitResponse()
 
+                    if(call.isSuccessful && call.body()!=null && call.body() == 1){
+                        withContext(Dispatchers.Main){
+                            Toast.makeText(activity!!, "Successfully added to diary", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }else{
+                        withContext(Dispatchers.Main){
+                            Toast.makeText(activity!!, "Failed to save Exercise", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
                 //reset
                 resetEverything();
                 dismiss();
@@ -261,4 +306,5 @@ class MapExerciseFragment : Fragment(){
     }
 
 }
+
 

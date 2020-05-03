@@ -5,6 +5,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
+import retrofit2.http.Path
 
 interface FitAppServerApi {
     //ip:port/api/Daily
@@ -37,4 +38,9 @@ interface FitAppServerApi {
 
     @DELETE("api/Exercise/{id}")
     fun deleteExercise(@Path("id") id: Int): Call<ResponseBody>
+
+    //GpsExercise part
+
+    @POST("api/GpsExercise")
+    fun postGpsExercise(@Body gpsExercise: GpsExercise): Call<Int>
 }

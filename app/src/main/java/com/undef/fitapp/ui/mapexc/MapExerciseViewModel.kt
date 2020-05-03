@@ -100,6 +100,8 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
     /**
      * Timer related stuff
      */
+    var startTime : Date? = null
+
     var prevExerciseLengthInSeconds = 0;
     val elapsedSeconds = MutableLiveData<Int>().apply { value = 0 }
     val elapsedTime: String
