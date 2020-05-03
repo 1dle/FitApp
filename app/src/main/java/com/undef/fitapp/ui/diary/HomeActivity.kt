@@ -3,6 +3,7 @@ package com.undef.fitapp.ui.diary
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.undef.fitapp.R
+import com.undef.fitapp.api.repositories.UserDataRepository
 
 class HomeActivity : AppCompatActivity() {
 
@@ -27,6 +29,13 @@ class HomeActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
+
+        //set username and email
+        val mHeaderView = navView.getHeaderView(0)
+        mHeaderView.findViewById<TextView>(R.id.tvMailNav).text = UserDataRepository.loggedUser.email
+        mHeaderView.findViewById<TextView>(R.id.tvFullNameNav).text = UserDataRepository.loggedUser.name
+
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
