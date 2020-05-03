@@ -52,6 +52,8 @@ class MapExerciseFragment : Fragment(){
     private lateinit var userRoutePolyline: Polyline
     private var _userRoutePolylineInitialized = false
 
+    private lateinit var activitySpinner: MaterialSpinner
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -68,7 +70,8 @@ class MapExerciseFragment : Fragment(){
             rootView.findViewById<View>(R.id.mapView) as MapView
         mMapView!!.onCreate(savedInstanceState)
 
-        initActivitySpinner(rootView.findViewById(R.id.spTrackActivityChooser) as MaterialSpinner)
+        activitySpinner = rootView.findViewById(R.id.spTrackActivityChooser) as MaterialSpinner
+        initActivitySpinner(activitySpinner)
 
         viewModel = ViewModelProviders.of(this).get(MapExerciseViewModel::class.java)
 
@@ -128,31 +131,36 @@ class MapExerciseFragment : Fragment(){
 
         val btnTrackStartStop = rootView.findViewById<Button>(R.id.btnTrackStartStop).apply{
             setOnClickListener {
-                if(viewModel.trackStatus.value == TrackStatus.STOP){
-                    viewModel.trackStatus.value = TrackStatus.RUN
-                    //ha nincs még trackelve a cucc
-                    viewModel.myLocationProvider.startLocationUpdates()
-                    //Log.d(MapExerciseFragment::class.java.name, "start")
-                    btnTrackStartStop.setText("Stop")
-                    viewModel.startTimer()
 
-                    viewModel.startTime = MyCalendar.getCurrentDate()
+                if(viewModel.selectedActivityType != ActivityCalculator.ActivityType.NONE){
+                    if(viewModel.trackStatus.value == TrackStatus.STOP){
+                        viewModel.trackStatus.value = TrackStatus.RUN
+                        //ha nincs még trackelve a cucc
+                        viewModel.myLocationProvider.startLocationUpdates()
+                        //Log.d(MapExerciseFragment::class.java.name, "start")
+                        btnTrackStartStop.setText("Stop")
+                        viewModel.startTimer()
 
+                        viewModel.startTime = MyCalendar.getCurrentDate()
 
-
-
-                }else if(viewModel.trackStatus.value == TrackStatus.RUN){
-                    viewModel.trackStatus.value = TrackStatus.STOP
-
-                    viewModel.myLocationProvider.stopLocationUpdates()
-                    //Log.d(MapExerciseFragment::class.java.name, "stop")
-                    btnTrackStartStop.setText("Start")
-                    viewModel.stopTimer()
-
-                    showActivityResults() //dialog
+                        activitySpinner.isEnabled = false
 
 
 
+
+                    }else if(viewModel.trackStatus.value == TrackStatus.RUN){
+                        viewModel.trackStatus.value = TrackStatus.STOP
+
+                        viewModel.myLocationProvider.stopLocationUpdates()
+                        //Log.d(MapExerciseFragment::class.java.name, "stop")
+                        btnTrackStartStop.setText("Start")
+                        viewModel.stopTimer()
+
+                        showActivityResults() //dialog
+                        activitySpinner.isEnabled = true
+                    }
+                }else{
+                    Toast.makeText(activity!!, "You must choose activity type!", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -168,7 +176,9 @@ class MapExerciseFragment : Fragment(){
         viewModel.reset();
 
         //1. clear map
-        userRoutePolyline.remove();
+        if(_userRoutePolylineInitialized){
+            userRoutePolyline.remove();
+        }
         googleMap!!.clear()
     }
 
