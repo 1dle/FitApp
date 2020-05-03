@@ -128,6 +128,19 @@ class MapExerciseViewModel(application: Application): AndroidViewModel(applicati
         elapsedSeconds.setValue(0)
     }
 
+    fun reset() {
+        //clear full trace list
+        trace.value!!.clear()
+        //remove allSpeeds what used for determine avgSpeed
+        allSpeeds.clear()
+        currentSpeed.value = 0
+        currentBurned = 0.0
+        _distanceInKms.value = 0.0
+        prevExerciseLengthInSeconds = 0
+        elapsedSeconds.value = 0
+
+    }
+
 }
 fun <T> MutableLiveData<T>.notifyObserver() {
     this.value = this.value

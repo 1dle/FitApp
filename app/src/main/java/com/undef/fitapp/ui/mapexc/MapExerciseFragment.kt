@@ -36,9 +36,6 @@ class MapExerciseFragment : Fragment(){
     private var googleMap: GoogleMap? = null
 
     //map drawing stuffs
-    private lateinit var userPostionCircle: Circle
-    private var _userPosCircleInitialized = false
-
     private lateinit var userRoutePolyline: Polyline
     private var _userRoutePolylineInitialized = false
 
@@ -71,10 +68,8 @@ class MapExerciseFragment : Fragment(){
             if(viewModel.trackStatus.value == TrackStatus.RUN){
                 //Log.d("CURRLOCATION", "ujpoz")
                 updateDrawedRoute(it)
-
                 //set speed text
                 rootView.findViewById<TextView>(R.id.tvTrackSpeed).text = "Speed:\n${viewModel.currentSpeed.value} m/s"
-
                 //set distance text
                 rootView.findViewById<TextView>(R.id.tvTrackDistance).text = "Distance:\n${viewModel.distanceTraveled} km"
 
@@ -149,8 +144,19 @@ class MapExerciseFragment : Fragment(){
 
 
         return rootView
-
     }
+
+    fun resetEverything(){
+        //map, timer, walked distance, whole trace, elpased seconds, walked distances
+
+        //view model stuffs reset
+        viewModel.reset();
+
+        //1. clear map
+        userRoutePolyline.remove();
+        googleMap!!.clear()
+    }
+
     fun showActivityResults(){
         MaterialDialog(context!!).show{
             noAutoDismiss()
@@ -166,6 +172,23 @@ class MapExerciseFragment : Fragment(){
             viewModel.currentBurned = ActivityCalculator.burnedKcals(viewModel.selectedActivityType, viewModel.durationInMinutes, UserDataRepository.loggedUser.weight)
 
             findViewById<TextView>(R.id.tvERburned).replace(String.format("%.2f", viewModel.currentBurned))
+
+            //DISCARD BUTTON
+            findViewById<TextView>(R.id.btnERdiscard).setOnClickListener {
+                resetEverything();
+                dismiss();
+            }
+
+            //SAVE TO DIARY BUTTON
+            findViewById<TextView>(R.id.btnERaddtoDiary).setOnClickListener {
+                //küldés a szerverre
+
+
+
+                //reset
+                resetEverything();
+                dismiss();
+            }
 
         }
     }
@@ -206,26 +229,6 @@ class MapExerciseFragment : Fragment(){
         _userRoutePolylineInitialized = true
 
 
-    }
-
-    fun drawCurrentLocation(location: Location){
-
-        if(_userPosCircleInitialized){
-            //levesszük az előzőt a mapről
-            userPostionCircle.remove()
-        }
-
-        val circleOptions: CircleOptions = CircleOptions()
-            .center(LatLng(location.latitude, location.longitude))
-            .radius(200.0) // In meters
-            .strokeWidth(3.0f)
-            .fillColor(Color.CYAN)
-        userPostionCircle = googleMap!!.addCircle(circleOptions)
-
-        moveMapCam(
-            LatLng(userPostionCircle.center.latitude, userPostionCircle.center.longitude)
-        )
-        _userPosCircleInitialized = true
     }
 
     fun moveMapCam(latlng: LatLng){

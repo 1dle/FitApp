@@ -9,7 +9,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Task
 import android.location.Location as Location
 
-class MyLocationProvider(val context: Context, private val locationCallback: MyLocationCallback){
+class MyLocationProvider(val context: Context, val locationCallback: MyLocationCallback){
 
     private val fusedLocationClient: FusedLocationProviderClient
     private val locationRequest: LocationRequest
@@ -17,7 +17,7 @@ class MyLocationProvider(val context: Context, private val locationCallback: MyL
     init{
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context!!)
         locationRequest = LocationRequest.create().apply {
-            interval = 1000 //1 sec
+            interval = 10000 //10 sec
             fastestInterval = 5000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
