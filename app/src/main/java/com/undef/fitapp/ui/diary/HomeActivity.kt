@@ -3,6 +3,7 @@ package com.undef.fitapp.ui.diary
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.undef.fitapp.R
 import com.undef.fitapp.api.repositories.UserDataRepository
+import com.undef.fitapp.ui.mapexc.previous.PreviousGpsExercises
 
 class HomeActivity : AppCompatActivity() {
 
@@ -54,6 +56,19 @@ class HomeActivity : AppCompatActivity() {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.home, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.previous_gps_exer -> {
+                //ha rákattolok az elsőre
+
+                startActivity( Intent(this, PreviousGpsExercises::class.java) )
+
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item);
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -43,4 +43,7 @@ interface FitAppServerApi {
 
     @POST("api/GpsExercise")
     fun postGpsExercise(@Body gpsExercise: GpsExercise): Call<Int>
+
+    @GET("api/GpsExercise/{id}")
+    fun getOneGpsExercise(@Path("id") id: Int): Call<GpsExercise>
 }
