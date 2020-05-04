@@ -89,8 +89,9 @@ class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode
             holder.view.setBackgroundColor(Color.parseColor("#dedede"))
         }
 
-        holder.view.setOnClickListener {
+        holder.view.setOnLongClickListener {
             holder.onMEListItemClickListener.onMEListItemClick(position, it)
+            true
         }
     }
 

@@ -2,16 +2,20 @@ package com.undef.fitapp.ui.mapexc.previous
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.MapsInitializer
@@ -21,10 +25,13 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.undef.fitapp.R
 import com.undef.fitapp.api.model.GpsExercise
+import com.undef.fitapp.api.service.ConnectionData
 import com.undef.fitapp.ui.mapexc.moveMapCam
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.awaitResponse
 
 
 class PreviousGpsExercises : AppCompatActivity() {
@@ -101,14 +108,48 @@ class PreviousGpsExercises : AppCompatActivity() {
                         googleMap.addPolyline(route.color(Color.BLUE))
                     }
 
+                setOnLongClickListener {
+                    //context.startActivity( Intent(context, GpsExerciseViewer::class.java))
+                    popupMenu {
+                        dropdownGravity = Gravity.RIGHT
+                        dropDownHorizontalOffset = -10
+                        dropDownVerticalOffset = 10
+                        section {
+                            item {
+                                label = "Delete"
+                                icon = R.drawable.ic_delete
+                                labelColor = Color.parseColor("#DD000A")
+                                callback = {
+                                    MaterialDialog(context!!).show {
+                                        title (text = "Delete GPS exercise")
+                                        message(text = "Delete \"${gpse.getShortTitle()}\"\nAre you sure?")
+                                        positiveButton(text = "Yes"){
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                val resp = ConnectionData.service.deleteGpsExercise(gpse.userID).awaitResponse()
+                                                if(resp.isSuccessful){
+                                                    withContext(Dispatchers.Main){
+                                                        Toast.makeText(context, "Gps exercise successfully deleted", Toast.LENGTH_SHORT)
+                                                            .show()
+                                                    }
 
+                                                }else{
+                                                    withContext(Dispatchers.Main){
+                                                        Toast.makeText(context, "Failed to delete GPS exercise", Toast.LENGTH_SHORT)
+                                                            .show()
+                                                    }
 
+                                                }
+                                            }
+                                        }
+                                        negativeButton(text = "No") { dismiss() }
+                                    }
+                                }
+                            }
+                        }
+                    }.show(context!!, it.findViewById<TextView>(R.id.tvGELburned))
+                    true
+                }
 
-
-                /*
-                setOnClickListener {
-                    context.startActivity( Intent(context, GpsExerciseViewer::class.java))
-                }*/
 
             }
         }
