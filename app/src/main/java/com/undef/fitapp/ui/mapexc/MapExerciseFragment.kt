@@ -122,7 +122,7 @@ class MapExerciseFragment : Fragment(){
             //last location
             viewModel.myLocationProvider.getLastLocation().addOnSuccessListener { location : Location? ->
                 if(location!=null){
-                    moveMapCam(
+                    googleMap!!.moveMapCam(
                         LatLng(location.latitude, location.longitude)
                     )
                 }
@@ -286,13 +286,6 @@ class MapExerciseFragment : Fragment(){
 
     }
 
-    fun moveMapCam(latlng: LatLng){
-        val cameraPosition =
-            CameraPosition.Builder().target(
-                latlng
-            ).zoom(12f).build()
-        googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-    }
 
 
 
@@ -316,5 +309,13 @@ class MapExerciseFragment : Fragment(){
     }
 
 }
+fun GoogleMap.moveMapCam(latlng: LatLng){
+    val cameraPosition =
+        CameraPosition.Builder().target(
+            latlng
+        ).zoom(12f).build()
+    animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+}
+
 
 

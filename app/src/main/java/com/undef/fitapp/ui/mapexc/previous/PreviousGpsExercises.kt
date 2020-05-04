@@ -1,6 +1,6 @@
 package com.undef.fitapp.ui.mapexc.previous
 
-import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +12,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.undef.fitapp.R
 import com.undef.fitapp.api.model.GpsExercise
-import com.undef.fitapp.api.repositories.toDateTime
-import com.undef.fitapp.custom.MEListAdapter
-import com.undef.fitapp.custom.SearchMode
+import com.undef.fitapp.ui.mapexc.moveMapCam
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 class PreviousGpsExercises : AppCompatActivity() {
 
@@ -61,9 +67,54 @@ class PreviousGpsExercises : AppCompatActivity() {
                     it[0].replace("-",".")+". "+it[1]
                 }, gpse.duration)
 
+                //setup google maps
+                lateinit var googleMap: GoogleMap
+                val mMapView: MapView = findViewById<View>(R.id.map3) as MapView
+                    mMapView.onCreate(null)
+                    mMapView.onResume() // needed to get the map to display immediately
+                    try {
+                        MapsInitializer.initialize(context)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    mMapView.getMapAsync { mMap ->
+                        googleMap = mMap
+                        // For showing a move to my location button
+                        googleMap.isMyLocationEnabled = false
+                        googleMap.uiSettings.setAllGesturesEnabled(false)
+
+                        //add first and last position
+                        val firstPos =LatLng(
+                            gpse.path.first().lat, gpse.path.first().lng
+                        )
+                        val lastPos = LatLng(
+                            gpse.path.last().lat, gpse.path.last().lng
+                        )
+                        googleMap.addMarker(
+                            MarkerOptions().position(firstPos).title("Starting position").icon(
+                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                        )
+                        googleMap.addMarker(
+                            MarkerOptions().position(lastPos).title("Last position")
+                        )
+                        googleMap.moveMapCam(firstPos)
+
+                        //draw whole route
+                        val route = PolylineOptions()
+                        gpse.path.forEach {
+                            route.add(LatLng(it.lat, it.lng))
+                        }
+                        googleMap.addPolyline(route.color(Color.BLUE))
+                    }
+
+
+
+
+
+                /*
                 setOnClickListener {
                     context.startActivity( Intent(context, GpsExerciseViewer::class.java))
-                }
+                }*/
 
             }
         }
@@ -101,6 +152,7 @@ class PreviousGpsExercises : AppCompatActivity() {
 
     }
 }
+
 
 
 
