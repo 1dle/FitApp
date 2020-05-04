@@ -1,5 +1,6 @@
 package com.undef.fitapp.ui.mapexc.previous
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
@@ -16,17 +17,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.github.zawadz88.materialpopupmenu.popupMenu
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.MapsInitializer
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.undef.fitapp.R
 import com.undef.fitapp.api.model.GpsExercise
 import com.undef.fitapp.api.service.ConnectionData
-import com.undef.fitapp.ui.mapexc.moveMapCam
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,6 +52,7 @@ class PreviousGpsExercises : AppCompatActivity() {
         }
 
         // Replace the contents of a view (invoked by the layout manager)
+        @SuppressLint("SetTextI18n")
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
@@ -66,7 +65,7 @@ class PreviousGpsExercises : AppCompatActivity() {
                 )
 
                 findViewById<TextView>(R.id.tvGELburned).text = String.format("%.2f kcals", gpse.burned)
-                findViewById<TextView>(R.id.tvGELshort).text = gpse.getShortTitle()+ "\nduration: "+ gpse.duration
+                findViewById<TextView>(R.id.tvGELshort).text = "%s\nduration: %s\ndistance: %s".format(gpse.getShortTitle(),gpse.getDurationHMS(),gpse.getDistance())
 
                 //setup google maps
                 lateinit var googleMap: GoogleMap
@@ -83,6 +82,7 @@ class PreviousGpsExercises : AppCompatActivity() {
                         // For showing a move to my location button
                         googleMap.isMyLocationEnabled = false
                         googleMap.uiSettings.setAllGesturesEnabled(false)
+                        //googleMap.uiSettings.isScrollGesturesEnabled = true
 
                         //add first and last position
                         val firstPos =LatLng(
@@ -98,7 +98,17 @@ class PreviousGpsExercises : AppCompatActivity() {
                         googleMap.addMarker(
                             MarkerOptions().position(lastPos).title("Last position")
                         )
-                        googleMap.moveMapCam(firstPos)
+                        //googleMap.moveMapCam(firstPos)
+
+                        val builder = LatLngBounds.Builder()
+                        builder.include(firstPos)
+                        builder.include(lastPos)
+
+                        val bounds: LatLngBounds = builder.build()
+                        val padding = 100 // offset from edges of the map in pixels
+
+                        val cu = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+                        googleMap.animateCamera(cu);
 
                         //draw whole route
                         val route = PolylineOptions()

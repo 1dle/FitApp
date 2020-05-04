@@ -79,7 +79,7 @@ class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode
                     holder.view.tvResultItemAdditional.text = "%.1f grams".format((myDataset[position] as Food).let{ it.quantity * 100})
                 }else{//GPS-exercise
                     holder.view.tvResultItemKcals.text = myDataset[position].getKcals()
-                    holder.view.tvResultItemAdditional.text = "duration: %.2f minutes".format((myDataset[position] as GpsExercise).duration)
+                    holder.view.tvResultItemAdditional.text = "duration: %s, distance: %s".format((myDataset[position] as GpsExercise).getDurationHMS(),(myDataset[position] as GpsExercise).getDistance())
                 }
 
             }

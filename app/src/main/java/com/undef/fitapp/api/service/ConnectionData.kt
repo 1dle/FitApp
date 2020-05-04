@@ -6,7 +6,7 @@ import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ConnectionData {
-    private const val url = "http://10.0.2.2:45455"
+    private const val url = "http://10.0.2.2:45457"
     val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(url)
         .addConverterFactory(GsonConverterFactory.create())
