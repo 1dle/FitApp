@@ -8,5 +8,6 @@ enum class SearchMode {
 }
 enum class ItemType{
     FOOD,
-    EXERCISE
+    EXERCISE,
+    GPSEX
 }

@@ -25,6 +25,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.undef.fitapp.R
 import com.undef.fitapp.api.model.Food
+import com.undef.fitapp.api.model.GpsExercise
 import com.undef.fitapp.api.model.Met
 import com.undef.fitapp.api.repositories.UserDataRepository
 import com.undef.fitapp.api.repositories.toCalendar
@@ -152,139 +153,191 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
 
     @SuppressLint("SetTextI18n")
     override fun onMEListItemClick(position: Int, view: View) {
-        popupMenu {
-            dropdownGravity = Gravity.RIGHT
-            dropDownHorizontalOffset = -10
-            dropDownVerticalOffset = 10
-            section {
-                item {
-                    label = "Modify"
-                    icon = R.drawable.ic_mode_edit
-                    callback = {
-                        //on click
-                        if(diaryViewModel.foodNMet.value!!.get(position).type == ItemType.EXERCISE){
-                            //ha exerciseot akarok módosítani
+        if(diaryViewModel.foodNMet.value!!.get(position).type != ItemType.GPSEX){
+            popupMenu {
+                dropdownGravity = Gravity.RIGHT
+                dropDownHorizontalOffset = -10
+                dropDownVerticalOffset = 10
+                section {
+                    item {
+                        label = "Modify"
+                        icon = R.drawable.ic_mode_edit
+                        callback = {
+                            //on click
+                            if(diaryViewModel.foodNMet.value!!.get(position).type == ItemType.EXERCISE){
+                                //ha exerciseot akarok módosítani
 
-                            //COPIED FROM SEARCHMNEACTIVITY
-                            val exercise = diaryViewModel.foodNMet.value!!.get(position) as Met
+                                //COPIED FROM SEARCHMNEACTIVITY
+                                val exercise = diaryViewModel.foodNMet.value!!.get(position) as Met
 
-                            val dialog = MaterialDialog(context!!)
-                                .noAutoDismiss() //dialog doesn't disappear when touch outside of the dialog
-                                .customView(R.layout.dialog_edit_exercise)
-
-
-
-                            dialog.findViewById<TextView>(R.id.tvDialogExerciseTitle).text = "Edit exercise"
-                            dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).setText(exercise.duration.toString()) //previous amount
-
-                            val tvBurned = dialog.findViewById<TextView>(R.id.tvDialogExerciseBurnedKcals)
-                            tvBurned.setText("${(exercise.duration * exercise.metNum * UserDataRepository.loggedUser.weight * 3.5) / 200} kcals burned")//previous amount
+                                val dialog = MaterialDialog(context!!)
+                                    .noAutoDismiss() //dialog doesn't disappear when touch outside of the dialog
+                                    .customView(R.layout.dialog_edit_exercise)
 
 
-                            //set excersise.description
-                            dialog.findViewById<TextView>(R.id.tvDialogExerciseDescription).text = exercise.getTitle()
 
-                            dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).addTextChangedListener(object :
-                                TextWatcher {
-                                override fun afterTextChanged(s: Editable?) {}
-                                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                                dialog.findViewById<TextView>(R.id.tvDialogExerciseTitle).text = "Edit exercise"
+                                dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).setText(exercise.duration.toString()) //previous amount
 
-                                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                                    //item.Duration * (item.MetNum * weight * 3.5) / 200.0
-                                    if(s.toString()!= ""){
-                                        val burnedKcals = (s.toString().toDouble() * exercise.metNum * UserDataRepository.loggedUser.weight * 3.5) / 200
-                                        tvBurned.text = "${burnedKcals} kcals burned"
+                                val tvBurned = dialog.findViewById<TextView>(R.id.tvDialogExerciseBurnedKcals)
+                                tvBurned.setText("${(exercise.duration * exercise.metNum * UserDataRepository.loggedUser.weight * 3.5) / 200} kcals burned")//previous amount
+
+
+                                //set excersise.description
+                                dialog.findViewById<TextView>(R.id.tvDialogExerciseDescription).text = exercise.getTitle()
+
+                                dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).addTextChangedListener(object :
+                                    TextWatcher {
+                                    override fun afterTextChanged(s: Editable?) {}
+                                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                                        //item.Duration * (item.MetNum * weight * 3.5) / 200.0
+                                        if(s.toString()!= ""){
+                                            val burnedKcals = (s.toString().toDouble() * exercise.metNum * UserDataRepository.loggedUser.weight * 3.5) / 200
+                                            tvBurned.text = "${burnedKcals} kcals burned"
+                                        }
+
+
                                     }
+                                })
+                                val dateAndTime = exercise.date!!.split("T")
+                                val times = dateAndTime[1].split(":")
+                                val old_time = times[0]+":"+times[1]
+                                dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).setText(old_time)
+
+                                dialog.findViewById<TextView>(R.id.tvDialogExerciseDate).text = dateAndTime[0]
+                                dialog.findViewById<TextView>(R.id.btnExerciseDialogAdd).text = "Save exercise"
 
 
-                                }
-                            })
-                            val dateAndTime = exercise.date!!.split("T")
-                            val times = dateAndTime[1].split(":")
-                            val old_time = times[0]+":"+times[1]
-                            dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).setText(old_time)
+                                dialog.findViewById<TextView>(R.id.btnExerciseDialogAdd).setOnClickListener {
+                                    if(!dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).text.isNullOrEmpty() && !dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).text.isNullOrEmpty()){
+                                        CoroutineScope(Dispatchers.IO).launch{
+                                            //met_id megszerzése
+                                            val metId = getMetIdFormName(exercise.detailed)
+                                            if(metId != -1){
+                                                //ha megvan a metid
 
-                            dialog.findViewById<TextView>(R.id.tvDialogExerciseDate).text = dateAndTime[0]
-                            dialog.findViewById<TextView>(R.id.btnExerciseDialogAdd).text = "Save exercise"
+                                                //elöző excercize törlése
+                                                val resp = ConnectionData.service.deleteExercise((diaryViewModel.foodNMet.value!!.get(position) as Met).id).awaitResponse()
+                                                if(resp.isSuccessful()){
+                                                    val statusCode =
+                                                        postExerciseToServer(
+                                                            UserDataRepository.loggedUser.id,
+                                                            metId,
+                                                            exercise.date!!,
+                                                            dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).text.toString().toDouble())
 
-
-                            dialog.findViewById<TextView>(R.id.btnExerciseDialogAdd).setOnClickListener {
-                                if(!dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).text.isNullOrEmpty() && !dialog.findViewById<EditText>(R.id.etDialogExerciseTimestamp).text.isNullOrEmpty()){
-                                    CoroutineScope(Dispatchers.IO).launch{
-                                        //met_id megszerzése
-                                        val metId = getMetIdFormName(exercise.detailed)
-                                        if(metId != -1){
-                                            //ha megvan a metid
-
-                                            //elöző excercize törlése
-                                            val resp = ConnectionData.service.deleteExercise((diaryViewModel.foodNMet.value!!.get(position) as Met).id).awaitResponse()
-                                            if(resp.isSuccessful()){
-                                                val statusCode =
-                                                    postExerciseToServer(
-                                                        UserDataRepository.loggedUser.id,
-                                                        metId,
-                                                        exercise.date!!,
-                                                        dialog.findViewById<EditText>(R.id.etDialogExerciseMinutes).text.toString().toDouble())
-
-                                                if(statusCode == 1){
-                                                    //sikeres insert
-                                                    dialog.dismiss()
+                                                    if(statusCode == 1){
+                                                        //sikeres insert
+                                                        dialog.dismiss()
+                                                        diaryViewModel.getDailyData()
+                                                    }else{
+                                                        TODO("sikertelen insert")
+                                                    }
                                                     diaryViewModel.getDailyData()
                                                 }else{
-                                                    TODO("sikertelen insert")
+                                                    TODO("Ha nem sikeres a törlés")
                                                 }
+
+                                            }else{
+                                                //nincs meg  amet id
+                                            }
+                                        }
+                                    }
+                                }
+                                dialog.findViewById<TextView>(R.id.btnExerciseDialogCancel).setOnClickListener {
+                                    dialog.dismiss()
+                                }
+                                dialog.show ()
+
+
+
+                            }else{
+                                //ha kaja módosítás
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    val f = foodToModifyData((diaryViewModel.foodNMet.value!!.get(position) as Food).name)
+                                    if(f != null){
+                                        val intent = Intent(context, EditMealActivity::class.java)
+                                        val bundle = Bundle()
+                                        bundle.putParcelable("selected_food",f as Food)
+                                        intent.putExtra("myBundle",bundle)
+                                        intent.putExtra("add_date", (diaryViewModel.foodNMet.value!!.get(position) as Food).date)
+                                        intent.putExtra("old_amount", (diaryViewModel.foodNMet.value!!.get(position) as Food).quantity)
+                                        intent.putExtra("meal_id_delete", (diaryViewModel.foodNMet.value!!.get(position) as Food).id)
+                                        startActivity(intent)
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                    item {
+                        label = "Delete"
+                        icon = R.drawable.ic_delete
+                        labelColor = Color.parseColor("#DD000A")
+                        callback = {
+                            //on click
+                            if(diaryViewModel.foodNMet.value!!.get(position).type == ItemType.EXERCISE){
+                                //ha exercise törlsé
+                                MaterialDialog(context!!).show {
+                                    title (text = "Delete exercise")
+                                    message(text = "Delete \"${(diaryViewModel.foodNMet.value!!.get(position) as Met).detailed}\"\nAre you sure?")
+                                    positiveButton(text = "Yes"){
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            val resp = ConnectionData.service.deleteExercise((diaryViewModel.foodNMet.value!!.get(position) as Met).id).awaitResponse()
+                                            if(resp.isSuccessful()){
                                                 diaryViewModel.getDailyData()
                                             }else{
                                                 TODO("Ha nem sikeres a törlés")
                                             }
-
-                                        }else{
-                                            //nincs meg  amet id
                                         }
                                     }
+                                    negativeButton(text = "No") { dismiss() }
                                 }
-                            }
-                            dialog.findViewById<TextView>(R.id.btnExerciseDialogCancel).setOnClickListener {
-                                dialog.dismiss()
-                            }
-                            dialog.show ()
-
-
-
-                        }else{
-                            //ha kaja módosítás
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val f = foodToModifyData((diaryViewModel.foodNMet.value!!.get(position) as Food).name)
-                                if(f != null){
-                                    val intent = Intent(context, EditMealActivity::class.java)
-                                    val bundle = Bundle()
-                                    bundle.putParcelable("selected_food",f as Food)
-                                    intent.putExtra("myBundle",bundle)
-                                    intent.putExtra("add_date", (diaryViewModel.foodNMet.value!!.get(position) as Food).date)
-                                    intent.putExtra("old_amount", (diaryViewModel.foodNMet.value!!.get(position) as Food).quantity)
-                                    intent.putExtra("meal_id_delete", (diaryViewModel.foodNMet.value!!.get(position) as Food).id)
-                                    startActivity(intent)
+                            }else{
+                                //ha meal törlés
+                                MaterialDialog(context!!).show {
+                                    title (text = "Delete meal")
+                                    message(text = "Delete \"${(diaryViewModel.foodNMet.value!!.get(position) as Food).name}\"\nAre you sure?")
+                                    positiveButton(text = "Yes"){
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            val resp = ConnectionData.service.deleteMeal((diaryViewModel.foodNMet.value!!.get(position) as Food).id).awaitResponse()
+                                            if(resp.isSuccessful()){
+                                                diaryViewModel.getDailyData()
+                                            }else{
+                                                TODO("Ha nem sikeres a törlés")
+                                            }
+                                        }
+                                    }
+                                    negativeButton(text = "No") { dismiss() }
                                 }
+
                             }
 
                         }
                     }
                 }
-                item {
-                    label = "Delete"
-                    icon = R.drawable.ic_delete
-                    labelColor = Color.parseColor("#DD000A")
-                    callback = {
-                        //on click
-                        if(diaryViewModel.foodNMet.value!!.get(position).type == ItemType.EXERCISE){
-                            //ha exercise törlsé
+            }.show(context!!,view)
+        }else{
+            //ha gps exercisera kattiontok akkor lehessen törölni
+            popupMenu {
+                dropdownGravity = Gravity.RIGHT
+                dropDownHorizontalOffset = -10
+                dropDownVerticalOffset = 10
+                section {
+                    item {
+                        label = "Delete"
+                        icon = R.drawable.ic_delete
+                        labelColor = Color.parseColor("#DD000A")
+                        callback = {
                             MaterialDialog(context!!).show {
-                                title (text = "Delete exercise")
-                                message(text = "Delete \"${(diaryViewModel.foodNMet.value!!.get(position) as Met).detailed}\"\nAre you sure?")
+                                title (text = "Delete GPS exercise")
+                                message(text = "Delete \"${(diaryViewModel.foodNMet.value!!.get(position) as GpsExercise).getShortTitle()}\"\nAre you sure?")
                                 positiveButton(text = "Yes"){
                                     CoroutineScope(Dispatchers.IO).launch {
-                                        val resp = ConnectionData.service.deleteExercise((diaryViewModel.foodNMet.value!!.get(position) as Met).id).awaitResponse()
-                                        if(resp.isSuccessful()){
+                                        val resp = ConnectionData.service.deleteGpsExercise((diaryViewModel.foodNMet.value!!.get(position) as GpsExercise).userID).awaitResponse()
+                                        if(resp.isSuccessful){
                                             diaryViewModel.getDailyData()
                                         }else{
                                             TODO("Ha nem sikeres a törlés")
@@ -293,30 +346,11 @@ class DiaryFragment : Fragment(), MEListAdapter.OnMEListItemClickListener{
                                 }
                                 negativeButton(text = "No") { dismiss() }
                             }
-                        }else{
-                            //ha meal törlés
-                            MaterialDialog(context!!).show {
-                                title (text = "Delete meal")
-                                message(text = "Delete \"${(diaryViewModel.foodNMet.value!!.get(position) as Food).name}\"\nAre you sure?")
-                                positiveButton(text = "Yes"){
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        val resp = ConnectionData.service.deleteMeal((diaryViewModel.foodNMet.value!!.get(position) as Food).id).awaitResponse()
-                                        if(resp.isSuccessful()){
-                                            diaryViewModel.getDailyData()
-                                        }else{
-                                            TODO("Ha nem sikeres a törlés")
-                                        }
-                                    }
-                                }
-                                negativeButton(text = "No") { dismiss() }
-                            }
-
                         }
-
                     }
                 }
-            }
-        }.show(context!!,view)
+            }.show(context!!,view)
+        }
     }
     private suspend fun foodToModifyData(foodName: String): Food? {
         val toPost = HashMap<String, Any>()

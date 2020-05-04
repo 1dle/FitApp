@@ -48,9 +48,12 @@ class DiaryViewModel : ViewModel() {
                     _remainingText.apply { value = "Remaining: %.2f kcals".format(response.body()!!.remaining) }
                     _burnedText.apply { value = "Burned: %.2f kcals".format(response.body()!!.burned) }
                     _foodNMet.apply {
-                        val newList = mutableListOf<FoodNMet>()
-                        newList.addAll(response.body()!!.foods)
-                        newList.addAll(response.body()!!.mets)
+                        val newList = mutableListOf<FoodNMet>().apply {
+                            addAll(response.body()!!.foods)
+                            addAll(response.body()!!.mets)
+                            addAll(response.body()!!.gpsExercises)
+                        }
+
 
                         //order list by date (feltöltéskor nincs felvive a timestamp)
                         newList.apply{

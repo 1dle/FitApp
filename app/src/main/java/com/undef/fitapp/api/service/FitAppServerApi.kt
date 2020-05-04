@@ -49,4 +49,7 @@ interface FitAppServerApi {
 
     @GET("api/Person/GpsExercise/{id}")
     fun getGpsExercisesForUser(@Path("id") id: Int): Call<List<GpsExercise>>
+
+    @DELETE("api/GpsExercise/{id}")
+    fun deleteGpsExercise(@Path("id") id: Int): Call<Int>
 }

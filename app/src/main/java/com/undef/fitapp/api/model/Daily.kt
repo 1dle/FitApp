@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 import com.undef.fitapp.R
 import com.undef.fitapp.api.repositories.UserDataRepository
 import com.undef.fitapp.custom.ItemType
+import com.undef.fitapp.ui.mapexc.previous.PreviousGpsExercises
 import kotlinx.android.parcel.Parcelize
 
 abstract class FoodNMet{
@@ -25,7 +26,9 @@ data class Daily(
     @SerializedName("Met")
     var mets: List<Met>,
     @SerializedName("Remaining")
-    var remaining: Double
+    var remaining: Double,
+    @SerializedName("GpsExercises")
+    var gpsExercises: List<GpsExercise>
 )
 @Parcelize
 data class Food(

@@ -55,17 +55,11 @@ class PreviousGpsExercises : AppCompatActivity() {
 
             holder.view.apply{
                 findViewById<ImageView>(R.id.ivGELtype).setImageResource(
-                    when(gpse.type){
-                        "cycling" -> R.drawable.ic_cycling
-                        "run" -> R.drawable.ic_exercise
-                        else -> R.drawable.ic_walk //persze ha walk van akkor is, de else kötelező
-                    }
+                    gpse.getIcon()
                 )
 
                 findViewById<TextView>(R.id.tvGELburned).text = String.format("%.2f kcals", gpse.burned)
-                findViewById<TextView>(R.id.tvGELshort).text = String.format("%s, %s\nduration: %.2f minutes", gpse.type, gpse.start.split("T").let {
-                    it[0].replace("-",".")+". "+it[1]
-                }, gpse.duration)
+                findViewById<TextView>(R.id.tvGELshort).text = gpse.getShortTitle()+ "\nduration: "+ gpse.duration
 
                 //setup google maps
                 lateinit var googleMap: GoogleMap

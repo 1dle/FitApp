@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.undef.fitapp.R
 import com.undef.fitapp.api.model.Food
 import com.undef.fitapp.api.model.FoodNMet
+import com.undef.fitapp.api.model.GpsExercise
 import com.undef.fitapp.api.model.Met
 import kotlinx.android.synthetic.main.list_item_mne.view.*
 
@@ -73,9 +74,12 @@ class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode
                 if(myDataset[position].type == ItemType.EXERCISE){
                     holder.view.tvResultItemKcals.text = "- ${myDataset[position].getKcals()} kcals"
                     holder.view.tvResultItemAdditional.text = "%.1f minutes".format((myDataset[position] as Met).duration)
-                }else{
+                }else if(myDataset[position].type == ItemType.FOOD){
                     holder.view.tvResultItemKcals.text = "%.2f kcals".format((myDataset[position] as Food).let{ it.quantity * it.calories })
                     holder.view.tvResultItemAdditional.text = "%.1f grams".format((myDataset[position] as Food).let{ it.quantity * 100})
+                }else{//GPS-exercise
+                    holder.view.tvResultItemKcals.text = myDataset[position].getKcals()
+                    holder.view.tvResultItemAdditional.text = "duration: %.2f minutes".format((myDataset[position] as GpsExercise).duration)
                 }
 
             }
