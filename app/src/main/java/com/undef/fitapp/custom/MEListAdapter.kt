@@ -47,19 +47,6 @@ class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode
     // Replace the contents of a view (invoked by the layout manager)
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        //holder.textView.text = myDataset[position]
-
-        /*
-        var date = myDataset[position].getDateOfAdd()
-        if(date != null){
-            //ha van dátum akkor az adpter a diary-ban van használva
-            holder.view.tvResultItemTitle.text = myDataset[position].getTitle() + " " + date
-        }else{
-            //ha nincs dátum akkor a keresésnél használjuk ezt az adaptert
-            holder.view.tvResultItemTitle.text = myDataset[position].getTitle()
-        }*/
 
         holder.view.tvResultItemTitle.text = myDataset[position].getTitle()
         holder.view.ivResultItemType.setImageResource(myDataset[position].getIcon())
@@ -89,9 +76,8 @@ class MEListAdapter(private var myDataset: List<FoodNMet>,private val searchMode
             holder.view.setBackgroundColor(Color.parseColor("#dedede"))
         }
 
-        holder.view.setOnLongClickListener {
+        holder.view.setOnClickListener {
             holder.onMEListItemClickListener.onMEListItemClick(position, it)
-            true
         }
     }
 
