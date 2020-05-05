@@ -12,11 +12,11 @@
 - Megcélzott oprációs rendszer: Android 5.0 API 21
 
 ## Képernyőképek
-<center>
+<div style="display:flex;">
 <img src="docs/screenshot_ui_diary.png" alt="ui_diary" width="30%"/>
 <img src="docs/screenshot_ui_gpsexercise.png" alt="ui_diary" width="30%"/>
 <img src="docs/screenshot_ui_gpsexercise_list.png" alt="ui_diary" width="30%"/>
-</center>
+</div>
 
 ## Felhasznált külső könyvtárak
 - JSON fájlok feldolgozásához: [GSON](https://github.com/google/gson)
